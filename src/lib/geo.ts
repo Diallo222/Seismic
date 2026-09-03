@@ -35,8 +35,8 @@ export function magToColor(mag: number): string {
  */
 export function magToSize(mag: number): number {
   const m = Math.max(0, mag);
-  // Soft floor + eased curve: ~0.012 at M1, ~0.028 at M4, ~0.048 at M7
-  return 0.008 + Math.pow(m / 9, 1.15) * 0.055;
+  // ~0.028 at M1, ~0.06 at M4, ~0.1 at M7
+  return 0.02 + Math.pow(m / 9, 1.0) * 0.11;
 }
 
 /** Shared “selected” accent — copper ink, not pure white. */
