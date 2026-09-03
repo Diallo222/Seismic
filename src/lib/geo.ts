@@ -14,11 +14,12 @@ export function latLngToVec3(
 }
 
 // Shared magnitude → visual scale, used by globe shaders and charts alike.
-const MAG_COLOR_STOPS: [number, string][] = [
-  [0, "#38bdf8"], // calm blue
-  [4, "#facc15"], // caution yellow
-  [6, "#f97316"], // warning orange
-  [8, "#ef4444"], // severe red
+// Observatory palette: deep teal → ochre → ember → blood.
+export const MAG_COLOR_STOPS: [number, string][] = [
+  [0, "#2a6b6b"],
+  [4, "#c9a227"],
+  [6, "#c45c26"],
+  [8, "#9b1d1d"],
 ];
 
 export function magToColor(mag: number): string {
@@ -28,6 +29,16 @@ export function magToColor(mag: number): string {
   return MAG_COLOR_STOPS[0][1];
 }
 
+/**
+ * Non-linear size so tiny quakes stay readable and M6+ events read as
+ * distinct impacts without blotting the globe.
+ */
 export function magToSize(mag: number): number {
-  return Math.max(0.01, mag) * 0.006;
+  const m = Math.max(0, mag);
+  // Soft floor + eased curve: ~0.012 at M1, ~0.028 at M4, ~0.048 at M7
+  return 0.008 + Math.pow(m / 9, 1.15) * 0.055;
 }
+
+/** Shared “selected” accent — copper ink, not pure white. */
+export const SELECTED_MARKER_COLOR = "#f4ede4";
+export const NEW_MARKER_COLOR = "#e0b07a";
