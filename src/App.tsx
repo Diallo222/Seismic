@@ -7,6 +7,8 @@ import { StatCards } from "./components/dashboard/StatCards";
 import { FeedList } from "./components/dashboard/FeedList";
 import { Filters } from "./components/dashboard/Filters";
 import { Globe } from "./components/globe/Globe";
+import { MagnitudeHistogram } from "./components/charts/MagnitudeHistogram";
+import { TimelineChart } from "./components/charts/TimelineChart";
 
 function App() {
   const feed = useDashboardStore((s) => s.feed);
@@ -43,6 +45,8 @@ function App() {
           {!isLoading && !isError && (
             <>
               <StatCards quakes={filtered} />
+              <TimelineChart quakes={filtered} />
+              <MagnitudeHistogram quakes={filtered} />
               <FeedList quakes={filtered} />
             </>
           )}
