@@ -105,9 +105,11 @@ export function Globe({ quakes }: { quakes: Quake[] }) {
 
   const selectedId = useDashboardStore((s) => s.selectedId);
   const selected = quakes.find((q) => q.id === selectedId) ?? null;
-  const flyTarget = selected
-    ? latLngToVec3(selected.lat, selected.lng, 1)
-    : null;
+
+  const flyTarget = useMemo(
+    () => (selected ? latLngToVec3(selected.lat, selected.lng, 1) : null),
+    [selected?.lat, selected?.lng],
+  );
 
   return (
     <Canvas
@@ -128,7 +130,7 @@ export function Globe({ quakes }: { quakes: Quake[] }) {
           <Ripples quakes={quakes} radius={MARKER_RADIUS} />
         </>
       )}
-      <CameraRig target={flyTarget} controlsRef={controlsRef} />
+      <CameraRig target={flyTarget} />
       <OrbitControls
         ref={controlsRef}
         enablePan={false}
