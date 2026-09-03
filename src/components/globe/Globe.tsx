@@ -82,8 +82,25 @@ function useTabVisible() {
   return visible;
 }
 
+// The globe is heavy on phones — drop the shader-driven glow/ripple layers
+// there and keep solid markers, per project.md §9.
+const MOBILE_QUERY = "(max-width: 767px)";
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(
+    () => window.matchMedia(MOBILE_QUERY).matches
+  );
+  useEffect(() => {
+    const mql = window.matchMedia(MOBILE_QUERY);
+    const onChange = () => setIsMobile(mql.matches);
+    mql.addEventListener("change", onChange);
+    return () => mql.removeEventListener("change", onChange);
+  }, []);
+  return isMobile;
+}
+
 export function Globe({ quakes }: { quakes: Quake[] }) {
   const tabVisible = useTabVisible();
+  const isMobile = useIsMobile();
   const controlsRef = useRef<ComponentRef<typeof OrbitControls>>(null);
 
   const selectedId = useDashboardStore((s) => s.selectedId);
@@ -95,7 +112,7 @@ export function Globe({ quakes }: { quakes: Quake[] }) {
   return (
     <Canvas
       camera={{ position: [0, 0, 6], fov: 45 }}
-      dpr={[1, 2]}
+      dpr={isMobile ? [1, 1.5] : [1, 2]}
       frameloop={tabVisible ? "always" : "never"}
     >
       <ambientLight intensity={0.5} />
@@ -105,8 +122,12 @@ export function Globe({ quakes }: { quakes: Quake[] }) {
       </Suspense>
       <Atmosphere />
       <Markers quakes={quakes} radius={MARKER_RADIUS} />
-      <Glow quakes={quakes} radius={MARKER_RADIUS} />
-      <Ripples quakes={quakes} radius={MARKER_RADIUS} />
+      {!isMobile && (
+        <>
+          <Glow quakes={quakes} radius={MARKER_RADIUS} />
+          <Ripples quakes={quakes} radius={MARKER_RADIUS} />
+        </>
+      )}
       <CameraRig target={flyTarget} controlsRef={controlsRef} />
       <OrbitControls
         ref={controlsRef}

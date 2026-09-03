@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useQuakes } from "./api/useQuakes";
+import { useQuakeDiff } from "./api/useQuakeDiff";
 import { useDashboardStore } from "./store/useDashboardStore";
 import { Header } from "./components/layout/Header";
 import { Panel } from "./components/layout/Panel";
@@ -16,6 +17,7 @@ function App() {
   const filters = useDashboardStore((s) => s.filters);
   const selectedId = useDashboardStore((s) => s.selectedId);
   const { data: quakes, isLoading, isError, error } = useQuakes(feed);
+  useQuakeDiff(quakes, feed);
 
   const filtered = useMemo(() => {
     if (!quakes) return [];
