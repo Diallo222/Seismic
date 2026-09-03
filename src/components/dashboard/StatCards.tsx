@@ -1,14 +1,15 @@
 import { useEffect } from "react";
 import { animate, motion, useMotionValue, useTransform } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import type { Quake } from "../../lib/types";
-import { timeAgo } from "../../lib/format";
+import { formatMag, timeAgo } from "../../lib/format";
 import { HudFrame } from "../hud/HudFrame";
 
 /** Subtle count-up whenever the total ticks — the "genuinely new" cue on the card. */
 function AnimatedCount({ value }: { value: number }) {
   const motionValue = useMotionValue(value);
   const rounded = useTransform(motionValue, (v) =>
-    Math.round(v).toLocaleString(),
+    Math.round(v).toLocaleString(undefined, { numberingSystem: "latn" }),
   );
 
   useEffect(() => {
@@ -23,6 +24,7 @@ function AnimatedCount({ value }: { value: number }) {
 }
 
 export function StatCards({ quakes }: { quakes: Quake[] }) {
+  const { t, i18n } = useTranslation();
   const count = quakes.length;
   const maxMag = count ? Math.max(...quakes.map((q) => q.mag)) : 0;
   const avgDepth = count
@@ -32,20 +34,20 @@ export function StatCards({ quakes }: { quakes: Quake[] }) {
 
   const stats = [
     {
-      label: "Quakes",
+      label: t("statCards.quakes"),
       value: <AnimatedCount value={count} />,
     },
     {
-      label: "Largest",
-      value: `M${maxMag.toFixed(1)}`,
+      label: t("statCards.largest"),
+      value: `M${formatMag(maxMag)}`,
     },
     {
-      label: "Avg depth",
-      value: `${avgDepth.toFixed(0)} km`,
+      label: t("statCards.avgDepth"),
+      value: `${avgDepth.toLocaleString(i18n.language, { numberingSystem: "latn", maximumFractionDigits: 0 })} km`,
     },
     {
-      label: "Updated",
-      value: lastUpdated ? timeAgo(lastUpdated) : "—",
+      label: t("statCards.updated"),
+      value: lastUpdated ? timeAgo(lastUpdated) : t("statCards.noData"),
     },
   ];
 

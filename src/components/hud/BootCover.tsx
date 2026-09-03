@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 const BOOT_KEY = "seismic-boot-seen";
 const BOOT_MS = 1200;
@@ -9,6 +10,7 @@ function prefersReducedMotion() {
 }
 
 export function BootCover() {
+  const { t } = useTranslation();
   const [visible, setVisible] = useState(() => {
     if (typeof window === "undefined") return false;
     if (prefersReducedMotion()) return false;
@@ -55,7 +57,7 @@ export function BootCover() {
             transition={{ duration: 0.4, ease: "easeOut" }}
             className="font-display text-4xl tracking-tight text-[var(--ink)] md:text-5xl"
           >
-            Seismic
+            {t("boot.title")}
           </motion.p>
           <motion.p
             initial={{ opacity: 0 }}
@@ -63,16 +65,16 @@ export function BootCover() {
             transition={{ delay: 0.2, duration: 0.35 }}
             className="mt-3 font-mono text-[10px] uppercase tracking-[0.28em] text-[var(--muted)]"
           >
-            Observing Earth
+            {t("boot.subtitle")}
           </motion.p>
           <motion.div
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
             transition={{ delay: 0.15, duration: 0.9, ease: "easeOut" }}
-            className="mt-8 h-px w-32 origin-left bg-[var(--copper)]"
+            className="mt-8 h-px w-32 origin-center bg-[var(--copper)]"
           />
           <p className="mt-6 font-mono text-[10px] text-[var(--muted)]/60">
-            Click or press any key to skip
+            {t("boot.skipHint")}
           </p>
         </motion.div>
       )}

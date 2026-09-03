@@ -1,15 +1,18 @@
+import { useTranslation } from "react-i18next";
 import type { FeedWindow } from "../../lib/types";
 import { MAG_COLOR_STOPS } from "../../lib/geo";
+import { formatMag } from "../../lib/format";
 import { useDashboardStore } from "../../store/useDashboardStore";
 
-const FEED_OPTIONS: { value: FeedWindow; label: string; short: string }[] = [
-  { value: "hour", label: "Past hour", short: "1H" },
-  { value: "day", label: "Past day", short: "1D" },
-  { value: "week", label: "Past week", short: "1W" },
-  { value: "significant_month", label: "Significant", short: "SIG" },
+const FEED_OPTIONS: { value: FeedWindow; labelKey: string; short: string }[] = [
+  { value: "hour", labelKey: "controls.feed.hour", short: "1H" },
+  { value: "day", labelKey: "controls.feed.day", short: "1D" },
+  { value: "week", labelKey: "controls.feed.week", short: "1W" },
+  { value: "significant_month", labelKey: "controls.feed.significant", short: "SIG" },
 ];
 
 export function FeedPills() {
+  const { t } = useTranslation();
   const feed = useDashboardStore((s) => s.feed);
   const setFeed = useDashboardStore((s) => s.setFeed);
 
@@ -17,17 +20,18 @@ export function FeedPills() {
     <div
       className="pointer-events-auto flex gap-0.5 hud-glass p-1"
       role="tablist"
-      aria-label="Time window"
+      aria-label={t("controls.feedWindow")}
     >
       {FEED_OPTIONS.map((opt) => {
         const active = feed === opt.value;
+        const label = t(opt.labelKey);
         return (
           <button
             key={opt.value}
             role="tab"
             aria-selected={active}
             onClick={() => setFeed(opt.value)}
-            title={opt.label}
+            title={label}
             className={`min-h-9 shrink-0 cursor-pointer rounded-[var(--radius-sm)] px-2 font-mono text-[10px] tracking-wide transition-colors duration-200 sm:px-2.5 sm:text-[11px] ${
               active
                 ? "bg-[var(--accent)] text-[var(--ink)]"
@@ -35,7 +39,7 @@ export function FeedPills() {
             }`}
           >
             <span className="md:hidden">{opt.short}</span>
-            <span className="hidden md:inline">{opt.label}</span>
+            <span className="hidden md:inline">{label}</span>
           </button>
         );
       })}
@@ -44,6 +48,7 @@ export function FeedPills() {
 }
 
 export function MagFilters() {
+  const { t } = useTranslation();
   const filters = useDashboardStore((s) => s.filters);
   const setFilters = useDashboardStore((s) => s.setFilters);
 
@@ -51,9 +56,9 @@ export function MagFilters() {
     <div className="flex flex-col gap-3">
       <label className="flex flex-col gap-2">
         <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--muted)]">
-          <span>Min magnitude</span>
+          <span>{t("controls.minMagnitude")}</span>
           <span className="text-[var(--copper)]">
-            M{filters.minMag.toFixed(1)}
+            M{formatMag(filters.minMag)}
           </span>
         </div>
         <input
@@ -67,7 +72,7 @@ export function MagFilters() {
           aria-valuemin={0}
           aria-valuemax={9}
           aria-valuenow={filters.minMag}
-          aria-label="Minimum magnitude"
+          aria-label={t("controls.minMagnitudeAria")}
         />
       </label>
 
@@ -78,17 +83,18 @@ export function MagFilters() {
           onChange={(e) => setFilters({ tsunamiOnly: e.target.checked })}
           className="h-4 w-4 cursor-pointer accent-[var(--accent)]"
         />
-        Tsunami alerts only
+        {t("controls.tsunamiOnly")}
       </label>
     </div>
   );
 }
 
 export function MagLegend() {
+  const { t } = useTranslation();
   return (
     <div className="pointer-events-auto hud-glass px-3 py-2">
       <div className="mb-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-[var(--muted)]">
-        Magnitude
+        {t("controls.magnitude")}
       </div>
       <div className="flex items-center gap-2">
         {MAG_COLOR_STOPS.map(([mag, color], i) => (
@@ -112,7 +118,7 @@ export function MagLegend() {
         rel="noreferrer"
         className="mt-2 inline-block font-mono text-[9px] uppercase tracking-[0.16em] text-[var(--muted)] transition-colors hover:text-[var(--copper)]"
       >
-        Data · USGS
+        {t("controls.dataSource")}
       </a>
     </div>
   );

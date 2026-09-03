@@ -1,5 +1,6 @@
+import { useTranslation } from "react-i18next";
 import type { Quake } from "../../lib/types";
-import { timeAgo } from "../../lib/format";
+import { formatMag, timeAgo } from "../../lib/format";
 import { magToColor } from "../../lib/geo";
 import { useDashboardStore } from "../../store/useDashboardStore";
 
@@ -10,6 +11,7 @@ export function FeedList({
   quakes: Quake[];
   className?: string;
 }) {
+  const { t } = useTranslation();
   const selectedId = useDashboardStore((s) => s.selectedId);
   const select = useDashboardStore((s) => s.select);
   const filters = useDashboardStore((s) => s.filters);
@@ -18,16 +20,16 @@ export function FeedList({
   if (quakes.length === 0) {
     return (
       <div className="px-1 py-6 text-center text-sm text-[var(--muted)]">
-        No quakes match current filters
+        {t("feedList.noMatch")}
         {filters.minMag > 0 && (
           <span className="block font-mono text-xs mt-1 text-[var(--muted)]/70">
-            M ≥ {filters.minMag.toFixed(1)}
-            {filters.tsunamiOnly ? " · tsunami only" : ""}
+            {t("feedList.minMagFilter", { mag: formatMag(filters.minMag) })}
+            {filters.tsunamiOnly ? t("feedList.tsunamiOnlySuffix") : ""}
           </span>
         )}
         {filters.minMag === 0 && filters.tsunamiOnly && (
           <span className="block font-mono text-xs mt-1 text-[var(--muted)]/70">
-            tsunami alerts only
+            {t("feedList.tsunamiOnly")}
           </span>
         )}
       </div>
@@ -43,7 +45,7 @@ export function FeedList({
           <li key={q.id}>
             <button
               onClick={() => select(q.id === selectedId ? null : q.id)}
-              className={`flex min-h-11 w-full cursor-pointer items-center gap-2.5 rounded-[var(--radius-sm)] px-2 py-1.5 text-left text-sm transition-colors duration-200 ${
+              className={`flex min-h-11 w-full cursor-pointer items-center gap-2.5 rounded-[var(--radius-sm)] px-2 py-1.5 text-start text-sm transition-colors duration-200 ${
                 selected
                   ? "bg-[var(--accent)]/20 ring-1 ring-[var(--accent)]/50"
                   : "hover:bg-[var(--line)]"
@@ -54,7 +56,7 @@ export function FeedList({
                 style={{ backgroundColor: magToColor(q.mag) }}
               />
               <span className="w-11 shrink-0 font-mono text-[13px] tabular text-[var(--ink)]">
-                M{q.mag.toFixed(1)}
+                M{formatMag(q.mag)}
               </span>
               <span className="min-w-0 flex-1 truncate text-[13px] text-[var(--muted)]">
                 {q.place}

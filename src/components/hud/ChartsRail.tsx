@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { HudFrame } from "../hud/HudFrame";
 
@@ -10,6 +11,7 @@ export function ChartsRail({
   children: ReactNode;
   defaultOpen?: boolean;
 }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(defaultOpen);
 
   return (
@@ -19,7 +21,7 @@ export function ChartsRail({
         className="flex min-h-10 w-full cursor-pointer items-center justify-between px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--muted)] transition-colors hover:text-[var(--ink)]"
         aria-expanded={open}
       >
-        <span>Activity</span>
+        <span>{t("chartsRail.activity")}</span>
         {open ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
       </button>
       <AnimatePresence initial={false}>

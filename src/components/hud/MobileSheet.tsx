@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import { List, SlidersHorizontal, X } from "lucide-react";
 import type { Quake } from "../../lib/types";
 import { MagFilters } from "./Controls";
@@ -19,6 +20,7 @@ export function MobileSheet({
   quakes: Quake[];
   selectedQuake: Quake | null;
 }) {
+  const { t } = useTranslation();
   const [tab, setTab] = useState<SheetTab>(null);
 
   return (
@@ -33,16 +35,16 @@ export function MobileSheet({
         </div>
         <div className="flex flex-col gap-2">
           <IconFab
-            label="Filters"
+            label={t("mobileSheet.filters")}
             active={tab === "filters"}
-            onClick={() => setTab((t) => (t === "filters" ? null : "filters"))}
+            onClick={() => setTab((prev) => (prev === "filters" ? null : "filters"))}
           >
             <SlidersHorizontal size={16} />
           </IconFab>
           <IconFab
-            label="Feed"
+            label={t("mobileSheet.feed")}
             active={tab === "feed"}
-            onClick={() => setTab((t) => (t === "feed" ? null : "feed"))}
+            onClick={() => setTab((prev) => (prev === "feed" ? null : "feed"))}
           >
             <List size={16} />
           </IconFab>
@@ -62,11 +64,11 @@ export function MobileSheet({
             <HudFrame strong className="flex max-h-[70dvh] flex-col rounded-b-none border-b-0 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
               <div className="mb-3 flex items-center justify-between">
                 <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--muted)]">
-                  {tab === "feed" ? "Event feed" : "Filters"}
+                  {tab === "feed" ? t("mobileSheet.eventFeed") : t("mobileSheet.filters")}
                 </span>
                 <button
                   onClick={() => setTab(null)}
-                  aria-label="Close sheet"
+                  aria-label={t("mobileSheet.closeSheet")}
                   className="flex h-9 w-9 cursor-pointer items-center justify-center text-[var(--muted)] hover:text-[var(--ink)]"
                 >
                   <X size={16} />

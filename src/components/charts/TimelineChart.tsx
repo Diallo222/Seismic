@@ -4,6 +4,7 @@ import { AreaClosed } from "@visx/shape";
 import { Group } from "@visx/group";
 import { LinearGradient } from "@visx/gradient";
 import { curveMonotoneX } from "@visx/curve";
+import { useTranslation } from "react-i18next";
 import type { Quake } from "../../lib/types";
 import { hourlyTimeline } from "../../lib/chartData";
 
@@ -19,6 +20,7 @@ function Chart({
   height: number;
   quakes: Quake[];
 }) {
+  const { t } = useTranslation();
   if (width < 10) return null;
 
   const buckets = hourlyTimeline(quakes);
@@ -38,7 +40,7 @@ function Chart({
   const peak = Math.max(...buckets.map((b) => b.count));
 
   return (
-    <svg width={width} height={height} aria-label="Past 24 hours activity chart">
+    <svg width={width} height={height} aria-label={t("charts.past24hAria")}>
       <Group left={MARGIN.left} top={MARGIN.top}>
         <LinearGradient
           id="timeline-gradient"
@@ -72,7 +74,7 @@ function Chart({
           fontSize={10}
           fontFamily="IBM Plex Mono, monospace"
         >
-          peak {peak}/hr
+          {t("charts.peakPerHour", { count: peak })}
         </text>
       </Group>
     </svg>
@@ -80,10 +82,11 @@ function Chart({
 }
 
 export function TimelineChart({ quakes }: { quakes: Quake[] }) {
+  const { t } = useTranslation();
   return (
     <div>
       <div className="mb-1.5 font-mono text-[9px] uppercase tracking-[0.18em] text-[var(--muted)]">
-        Past 24h
+        {t("charts.past24h")}
       </div>
       <div style={{ height: 100 }}>
         <ParentSize>

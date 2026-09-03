@@ -3,6 +3,7 @@ import { scaleBand, scaleLinear } from "@visx/scale";
 import { Bar } from "@visx/shape";
 import { Group } from "@visx/group";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { Quake } from "../../lib/types";
 import { magnitudeHistogram } from "../../lib/chartData";
 import { magToColor } from "../../lib/geo";
@@ -18,6 +19,7 @@ function Chart({
   height: number;
   quakes: Quake[];
 }) {
+  const { t } = useTranslation();
   const [hover, setHover] = useState<{ mag: number; count: number } | null>(
     null,
   );
@@ -39,7 +41,7 @@ function Chart({
   });
 
   return (
-    <svg width={width} height={height} aria-label="Magnitude distribution chart">
+    <svg width={width} height={height} aria-label={t("charts.magnitudeDistributionAria")}>
       <Group left={MARGIN.left} top={MARGIN.top}>
         <line
           x1={0}
@@ -97,10 +99,11 @@ function Chart({
 }
 
 export function MagnitudeHistogram({ quakes }: { quakes: Quake[] }) {
+  const { t } = useTranslation();
   return (
     <div>
       <div className="mb-1.5 font-mono text-[9px] uppercase tracking-[0.18em] text-[var(--muted)]">
-        Magnitude distribution
+        {t("charts.magnitudeDistribution")}
       </div>
       <div style={{ height: 100 }}>
         <ParentSize>
