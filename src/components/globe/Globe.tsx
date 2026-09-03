@@ -1,15 +1,23 @@
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { ComponentRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, useTexture } from "@react-three/drei";
+import * as THREE from "three";
 import type { Quake } from "../../lib/types";
 import { latLngToVec3 } from "../../lib/geo";
 import { useDashboardStore } from "../../store/useDashboardStore";
+import {
+  atmosphereFragmentShader,
+  atmosphereVertexShader,
+} from "../../shaders/atmosphere.glsl";
 import { Markers } from "./Markers";
+import { Glow } from "./Glow";
+import { Ripples } from "./Ripples";
 import { CameraRig } from "./CameraRig";
 
 const GLOBE_RADIUS = 2;
 const MARKER_RADIUS = GLOBE_RADIUS * 1.01; // sit just above the surface
+const ATMOSPHERE_SCALE = 1.15;
 
 // Public-domain earth day map, served from three.js's own examples (CORS-enabled).
 const EARTH_TEXTURE_URL =
@@ -30,6 +38,35 @@ function GlobeFallback() {
     <mesh>
       <sphereGeometry args={[GLOBE_RADIUS, 32, 32]} />
       <meshBasicMaterial color="#1e293b" wireframe />
+    </mesh>
+  );
+}
+
+/** Fresnel rim glow — a slightly larger sphere, back-side + additive. */
+function Atmosphere() {
+  const material = useMemo(
+    () =>
+      new THREE.ShaderMaterial({
+        uniforms: {
+          uColor: { value: new THREE.Color("#38bdf8") },
+          uPower: { value: 4 },
+        },
+        vertexShader: atmosphereVertexShader,
+        fragmentShader: atmosphereFragmentShader,
+        transparent: true,
+        side: THREE.BackSide,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+      }),
+    []
+  );
+
+  useEffect(() => () => material.dispose(), [material]);
+
+  return (
+    <mesh scale={ATMOSPHERE_SCALE}>
+      <sphereGeometry args={[GLOBE_RADIUS, 64, 64]} />
+      <primitive object={material} attach="material" />
     </mesh>
   );
 }
@@ -65,8 +102,11 @@ export function Globe({ quakes }: { quakes: Quake[] }) {
       <directionalLight position={[5, 3, 5]} intensity={1.5} />
       <Suspense fallback={<GlobeFallback />}>
         <Earth />
-        <Markers quakes={quakes} radius={MARKER_RADIUS} />
       </Suspense>
+      <Atmosphere />
+      <Markers quakes={quakes} radius={MARKER_RADIUS} />
+      <Glow quakes={quakes} radius={MARKER_RADIUS} />
+      <Ripples quakes={quakes} radius={MARKER_RADIUS} />
       <CameraRig target={flyTarget} controlsRef={controlsRef} />
       <OrbitControls
         ref={controlsRef}
