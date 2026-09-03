@@ -1,57 +1,95 @@
+import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { X } from "lucide-react";
 import type { Quake } from "../../lib/types";
 import { formatDepth, formatMag, timeAgo } from "../../lib/format";
 import { magToColor } from "../../lib/geo";
 import { useDashboardStore } from "../../store/useDashboardStore";
+import { HudFrame } from "../hud/HudFrame";
 
-export function QuakeDetail({ quake }: { quake: Quake | null }) {
+export function QuakeDetail({
+  quake,
+  mobile = false,
+}: {
+  quake: Quake | null;
+  mobile?: boolean;
+}) {
   const select = useDashboardStore((s) => s.select);
+
+  useEffect(() => {
+    if (!quake) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") select(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [quake, select]);
 
   return (
     <AnimatePresence>
       {quake && (
         <motion.div
           key={quake.id}
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: mobile ? 24 : 12 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 16 }}
-          transition={{ duration: 0.25, ease: "easeOut" }}
-          className="absolute bottom-4 left-4 right-4 max-w-sm rounded-lg border border-white/10 bg-black/70 p-4 backdrop-blur-sm md:right-auto"
+          exit={{ opacity: 0, y: mobile ? 16 : 8 }}
+          transition={{ duration: 0.28, ease: "easeOut" }}
+          className="pointer-events-auto w-full max-w-sm"
         >
-          <button
-            onClick={() => select(null)}
-            aria-label="Close"
-            className="absolute right-3 top-3 text-white/40 hover:text-white"
-          >
-            ✕
-          </button>
+          <HudFrame strong className="relative p-4">
+            <button
+              onClick={() => select(null)}
+              aria-label="Close detail"
+              className="absolute right-2.5 top-2.5 flex h-9 w-9 cursor-pointer items-center justify-center rounded-[var(--radius-sm)] text-[var(--muted)] transition-colors hover:text-[var(--ink)]"
+            >
+              <X size={16} strokeWidth={1.75} />
+            </button>
 
-          <div className="flex items-center gap-2">
-            <span
-              className="h-3 w-3 shrink-0 rounded-full"
-              style={{ backgroundColor: magToColor(quake.mag) }}
-            />
-            <span className="text-lg font-semibold text-white">
-              M{formatMag(quake.mag)}
-            </span>
-            <span className="text-xs text-white/40">{timeAgo(quake.time)}</span>
-          </div>
+            <div className="flex items-center gap-2.5 pr-8">
+              <span
+                className="h-3 w-3 shrink-0 rounded-full"
+                style={{ backgroundColor: magToColor(quake.mag) }}
+              />
+              <span className="font-mono text-xl font-medium tabular text-[var(--ink)]">
+                M{formatMag(quake.mag)}
+              </span>
+              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--muted)]">
+                {timeAgo(quake.time)}
+              </span>
+            </div>
 
-          <p className="mt-1 pr-4 text-sm text-white/70">{quake.place}</p>
+            <p className="mt-2 pr-6 text-sm leading-snug text-[var(--muted)]">
+              {quake.place}
+            </p>
 
-          <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-white/50">
-            <div>Depth: {formatDepth(quake.depth)}</div>
-            <div>{quake.tsunami ? "⚠ Tsunami alert" : "No tsunami alert"}</div>
-          </div>
+            <div className="mt-3 grid grid-cols-2 gap-2 font-mono text-[11px] text-[var(--muted)]">
+              <div>
+                Depth{" "}
+                <span className="text-[var(--ink)]">
+                  {formatDepth(quake.depth)}
+                </span>
+              </div>
+              <div>
+                {quake.tsunami ? (
+                  <span className="text-[var(--accent)]">Tsunami alert</span>
+                ) : (
+                  "No tsunami alert"
+                )}
+              </div>
+              <div className="col-span-2 text-[var(--muted)]/70">
+                {quake.lat.toFixed(2)}°, {quake.lng.toFixed(2)}°
+              </div>
+            </div>
 
-          <a
-            href={quake.url}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-3 inline-block text-xs text-sky-400 hover:underline"
-          >
-            View on USGS →
-          </a>
+            <a
+              href={quake.url}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-3 inline-flex min-h-9 items-center font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--copper)] transition-colors hover:text-[var(--ink)]"
+            >
+              View on USGS →
+            </a>
+          </HudFrame>
         </motion.div>
       )}
     </AnimatePresence>

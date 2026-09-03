@@ -8,7 +8,7 @@ import type { Quake } from "../../lib/types";
 import { hourlyTimeline } from "../../lib/chartData";
 
 const MARGIN = { top: 8, right: 8, bottom: 8, left: 8 };
-const ACCENT = "#38bdf8";
+const ACCENT = "#e0b07a";
 
 function Chart({
   width,
@@ -35,8 +35,10 @@ function Chart({
     nice: true,
   });
 
+  const peak = Math.max(...buckets.map((b) => b.count));
+
   return (
-    <svg width={width} height={height}>
+    <svg width={width} height={height} aria-label="Past 24 hours activity chart">
       <Group left={MARGIN.left} top={MARGIN.top}>
         <LinearGradient
           id="timeline-gradient"
@@ -60,8 +62,18 @@ function Chart({
           x2={innerW}
           y1={innerH}
           y2={innerH}
-          stroke="rgba(255,255,255,0.1)"
+          stroke="rgba(232,196,160,0.14)"
         />
+        <text
+          x={innerW}
+          y={10}
+          textAnchor="end"
+          fill="var(--copper)"
+          fontSize={10}
+          fontFamily="IBM Plex Mono, monospace"
+        >
+          peak {peak}/hr
+        </text>
       </Group>
     </svg>
   );
@@ -69,9 +81,11 @@ function Chart({
 
 export function TimelineChart({ quakes }: { quakes: Quake[] }) {
   return (
-    <div className="rounded-lg border border-white/10 bg-white/5 p-3">
-      <div className="mb-2 text-xs text-white/50">Past 24h</div>
-      <div style={{ height: 110 }}>
+    <div>
+      <div className="mb-1.5 font-mono text-[9px] uppercase tracking-[0.18em] text-[var(--muted)]">
+        Past 24h
+      </div>
+      <div style={{ height: 100 }}>
         <ParentSize>
           {({ width, height }) => (
             <Chart width={width} height={height} quakes={quakes} />
