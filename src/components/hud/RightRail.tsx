@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, List } from "lucide-react";
+import { useState } from "react";
 import type { Quake } from "../../lib/types";
 import { MagFilters } from "./Controls";
 import { HudFrame } from "./HudFrame";
@@ -17,27 +18,31 @@ export function RightRail({
   loading: boolean;
   defaultOpen?: boolean;
 }) {
+  const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(defaultOpen);
-  const count = loading ? "…" : quakes.length.toLocaleString();
+  const count = loading
+    ? "…"
+    : quakes.length.toLocaleString(i18n.language, { numberingSystem: "latn" });
 
   return (
-    <div className="pointer-events-none absolute bottom-28 right-0 top-20 z-[12] flex items-stretch">
-      {/* Collapsed tab — always visible on the right edge */}
+    <div className="pointer-events-none absolute bottom-28 end-0 top-20 z-[12] flex items-stretch">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-controls="feed-rail-panel"
-        aria-label={open ? "Close feed panel" : "Open feed panel"}
-        className="pointer-events-auto relative z-10 my-auto flex h-28 w-9 cursor-pointer flex-col items-center justify-center gap-2 rounded-l-[var(--radius-md)] border border-r-0 border-[var(--line)] bg-[var(--glass-strong)] text-[var(--copper)] backdrop-blur-md transition-colors hover:text-[var(--ink)]"
+        aria-label={open ? t("rightRail.closePanel") : t("rightRail.openPanel")}
+        className="pointer-events-auto relative z-10 my-auto flex h-28 w-9 cursor-pointer flex-col items-center justify-center gap-2 rounded-s-[var(--radius-md)] border border-e-0 border-[var(--line)] bg-[var(--glass-strong)] text-[var(--copper)] backdrop-blur-md transition-colors hover:text-[var(--ink)]"
       >
-        {open ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+        <span className="inline-flex rtl:rotate-180" aria-hidden>
+          {open ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+        </span>
         <List size={14} />
         <span
           className="font-mono text-[9px] uppercase tracking-[0.18em]"
           style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
         >
-          Feed · {count}
+          {t("rightRail.feedCount", { count })}
         </span>
       </button>
 
@@ -52,10 +57,10 @@ export function RightRail({
             transition={{ duration: 0.28, ease: "easeOut" }}
             className="pointer-events-auto overflow-hidden"
           >
-            <HudFrame className="ml-0 flex h-full w-[320px] flex-col gap-3 rounded-r-none border-r-0 p-3">
+            <HudFrame className="ms-0 flex h-full w-[320px] flex-col gap-3 rounded-e-none border-e-0 p-3">
               <div className="flex items-center justify-between">
                 <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--muted)]">
-                  Feed
+                  {t("rightRail.feed")}
                 </span>
                 <span className="font-mono text-[10px] tabular text-[var(--muted)]">
                   {count}

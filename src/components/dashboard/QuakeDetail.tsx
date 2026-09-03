@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { X } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { ArrowUpRight, X } from "lucide-react";
 import type { Quake } from "../../lib/types";
 import { formatDepth, formatMag, timeAgo } from "../../lib/format";
 import { magToColor } from "../../lib/geo";
@@ -14,6 +15,7 @@ export function QuakeDetail({
   quake: Quake | null;
   mobile?: boolean;
 }) {
+  const { t, i18n } = useTranslation();
   const select = useDashboardStore((s) => s.select);
 
   useEffect(() => {
@@ -39,13 +41,13 @@ export function QuakeDetail({
           <HudFrame strong className="relative p-4">
             <button
               onClick={() => select(null)}
-              aria-label="Close detail"
-              className="absolute right-2.5 top-2.5 flex h-9 w-9 cursor-pointer items-center justify-center rounded-[var(--radius-sm)] text-[var(--muted)] transition-colors hover:text-[var(--ink)]"
+              aria-label={t("quakeDetail.closeDetail")}
+              className="absolute end-2.5 top-2.5 flex h-9 w-9 cursor-pointer items-center justify-center rounded-[var(--radius-sm)] text-[var(--muted)] transition-colors hover:text-[var(--ink)]"
             >
               <X size={16} strokeWidth={1.75} />
             </button>
 
-            <div className="flex items-center gap-2.5 pr-8">
+            <div className="flex items-center gap-2.5 pe-8">
               <span
                 className="h-3 w-3 shrink-0 rounded-full"
                 style={{ backgroundColor: magToColor(quake.mag) }}
@@ -58,26 +60,27 @@ export function QuakeDetail({
               </span>
             </div>
 
-            <p className="mt-2 pr-6 text-sm leading-snug text-[var(--muted)]">
+            <p className="mt-2 pe-6 text-sm leading-snug text-[var(--muted)]">
               {quake.place}
             </p>
 
             <div className="mt-3 grid grid-cols-2 gap-2 font-mono text-[11px] text-[var(--muted)]">
               <div>
-                Depth{" "}
+                {t("quakeDetail.depth")}{" "}
                 <span className="text-[var(--ink)]">
                   {formatDepth(quake.depth)}
                 </span>
               </div>
               <div>
                 {quake.tsunami ? (
-                  <span className="text-[var(--accent)]">Tsunami alert</span>
+                  <span className="text-[var(--accent)]">{t("quakeDetail.tsunamiAlert")}</span>
                 ) : (
-                  "No tsunami alert"
+                  t("quakeDetail.noTsunamiAlert")
                 )}
               </div>
               <div className="col-span-2 text-[var(--muted)]/70">
-                {quake.lat.toFixed(2)}°, {quake.lng.toFixed(2)}°
+                {quake.lat.toLocaleString(i18n.language, { numberingSystem: "latn", maximumFractionDigits: 2, minimumFractionDigits: 2 })}°,{" "}
+                {quake.lng.toLocaleString(i18n.language, { numberingSystem: "latn", maximumFractionDigits: 2, minimumFractionDigits: 2 })}°
               </div>
             </div>
 
@@ -85,9 +88,10 @@ export function QuakeDetail({
               href={quake.url}
               target="_blank"
               rel="noreferrer"
-              className="mt-3 inline-flex min-h-9 items-center font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--copper)] transition-colors hover:text-[var(--ink)]"
+              className="mt-3 inline-flex min-h-9 items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--copper)] transition-colors hover:text-[var(--ink)]"
             >
-              View on USGS →
+              {t("quakeDetail.viewOnUsgs")}
+              <ArrowUpRight size={12} strokeWidth={1.75} className="rtl:-scale-x-100" aria-hidden />
             </a>
           </HudFrame>
         </motion.div>
