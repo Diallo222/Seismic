@@ -8,7 +8,7 @@ import {
   selectionHaloVertexShader,
 } from "../../shaders/selectionHalo.glsl";
 
-const HALO_SIZE = 0.38;
+const HALO_SIZE = 0.4;
 
 /** Dual breathing rings locked to the selected epicenter. */
 export function SelectionHalo({

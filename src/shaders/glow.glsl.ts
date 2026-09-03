@@ -1,9 +1,10 @@
-// Additive point-sprite glow — soft core + wide halo, magnitude-driven.
+// Additive point-sprite glow — pin-light core + wide bloom.
 export const glowVertexShader = /* glsl */ `
   attribute float aMag;
   attribute vec3 aColor;
   attribute float aBoost;
   uniform float uSize;
+  uniform float uTime;
   varying float vMag;
   varying vec3 vColor;
   varying float vBoost;
@@ -11,10 +12,13 @@ export const glowVertexShader = /* glsl */ `
   void main() {
     vMag = aMag;
     vColor = aColor;
-    vBoost = aBoost;
+    // Selected markers breathe slightly via aBoost > 1
+    float pulse = aBoost > 1.0 ? (1.0 + 0.12 * sin(uTime * 2.8)) : 1.0;
+    vBoost = aBoost * pulse;
+
     vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-    float magScale = 0.55 + aMag * 0.22;
-    gl_PointSize = uSize * magScale * (1.0 + vBoost * 0.55) / max(0.35, -mvPosition.z);
+    float magScale = 0.5 + pow(aMag / 8.0, 1.1) * 1.35;
+    gl_PointSize = uSize * magScale * (1.0 + vBoost * 0.65) / max(0.4, -mvPosition.z);
     gl_Position = projectionMatrix * mvPosition;
   }
 `;
@@ -28,19 +32,17 @@ export const glowFragmentShader = /* glsl */ `
     vec2 uv = gl_PointCoord - vec2(0.5);
     float d = length(uv);
 
-    // Tight hot core + soft outer bloom
-    float core = 1.0 - smoothstep(0.0, 0.12, d);
-    float mid  = 1.0 - smoothstep(0.0, 0.32, d);
-    float halo = 1.0 - smoothstep(0.0, 0.5, d);
-    float glow = core * 0.95 + mid * 0.45 + halo * 0.2;
+    float core = exp(-d * d * 48.0);
+    float mid  = exp(-d * d * 12.0);
+    float halo = exp(-d * d * 4.5);
+    float glow = core * 1.15 + mid * 0.55 + halo * 0.22;
 
-    float magT = clamp(vMag / 8.0, 0.18, 1.0);
-    float intensity = glow * magT * (0.55 + vBoost * 0.7);
+    float magT = clamp(0.2 + pow(vMag / 8.0, 1.05), 0.2, 1.15);
+    float intensity = glow * magT * (0.5 + vBoost * 0.75);
 
-    if (intensity <= 0.008) discard;
+    if (intensity <= 0.01) discard;
 
-    // Slightly warm the rim so it matches the observatory HUD copper haze
-    vec3 col = mix(vColor, vec3(0.88, 0.69, 0.45), core * 0.25);
+    vec3 col = mix(vColor, vec3(1.0), core * 0.45);
     gl_FragColor = vec4(col, intensity);
   }
 `;

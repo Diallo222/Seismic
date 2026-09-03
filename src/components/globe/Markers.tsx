@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import type { ThreeEvent } from "@react-three/fiber";
@@ -11,10 +11,14 @@ import {
   SELECTED_MARKER_COLOR,
 } from "../../lib/geo";
 import { useDashboardStore } from "../../store/useDashboardStore";
+import {
+  markerFragmentShader,
+  markerVertexShader,
+} from "../../shaders/marker.glsl";
 
-const SELECTED_SCALE_BOOST = 2.05;
-const NEW_QUAKE_SCALE_BOOST = 1.45;
-const HOVER_SCALE_BOOST = 1.35;
+const SELECTED_SCALE_BOOST = 2.2;
+const NEW_QUAKE_SCALE_BOOST = 1.55;
+const HOVER_SCALE_BOOST = 1.4;
 
 export function Markers({
   quakes,
@@ -34,10 +38,37 @@ export function Markers({
   const dummy = useMemo(() => new THREE.Object3D(), []);
   const color = useMemo(() => new THREE.Color(), []);
   const selectedIndexRef = useRef(-1);
+  const colorAttrRef = useRef<THREE.InstancedBufferAttribute | null>(null);
+
+  const material = useMemo(
+    () =>
+      new THREE.ShaderMaterial({
+        vertexShader: markerVertexShader,
+        fragmentShader: markerFragmentShader,
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        toneMapped: false,
+      }),
+    [],
+  );
+
+  useEffect(() => () => material.dispose(), [material]);
 
   useLayoutEffect(() => {
     const mesh = meshRef.current;
     if (!mesh) return;
+
+    // Per-instance color for the custom shader (instanceColorAttr).
+    let colorAttr = colorAttrRef.current;
+    if (!colorAttr || colorAttr.count !== count) {
+      colorAttr = new THREE.InstancedBufferAttribute(
+        new Float32Array(count * 3),
+        3,
+      );
+      mesh.geometry.setAttribute("instanceColorAttr", colorAttr);
+      colorAttrRef.current = colorAttr;
+    }
 
     selectedIndexRef.current = -1;
 
@@ -49,7 +80,6 @@ export function Markers({
       const isSelected = q.id === selectedId;
       const isNew = newIds.has(q.id);
       const isHovered = q.id === hoveredId;
-
       if (isSelected) selectedIndexRef.current = i;
 
       let boost = 1;
@@ -64,14 +94,13 @@ export function Markers({
       if (isSelected) color.set(SELECTED_MARKER_COLOR);
       else if (isNew) color.set(NEW_MARKER_COLOR);
       else color.set(magToColor(q.mag));
-      mesh.setColorAt(i, color);
+      colorAttr.setXYZ(i, color.r, color.g, color.b);
     });
 
     mesh.instanceMatrix.needsUpdate = true;
-    if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
-  }, [quakes, radius, selectedId, newIds, hoveredId, dummy, color]);
+    colorAttr.needsUpdate = true;
+  }, [quakes, radius, selectedId, newIds, hoveredId, dummy, color, count]);
 
-  // Soft breathe — only the selected instance.
   useFrame(({ clock }) => {
     const mesh = meshRef.current;
     const idx = selectedIndexRef.current;
@@ -81,7 +110,7 @@ export function Markers({
     if (!q || q.id !== selectedId) return;
 
     const [x, y, z] = latLngToVec3(q.lat, q.lng, radius);
-    const pulse = 1 + Math.sin(clock.elapsedTime * 2.6) * 0.08;
+    const pulse = 1 + Math.sin(clock.elapsedTime * 2.8) * 0.1;
     dummy.position.set(x, y, z);
     dummy.lookAt(0, 0, 0);
     dummy.scale.setScalar(magToSize(q.mag) * SELECTED_SCALE_BOOST * pulse);
@@ -92,44 +121,35 @@ export function Markers({
 
   if (count === 0) return null;
 
-  const handleClick = (e: ThreeEvent<MouseEvent>) => {
-    e.stopPropagation();
-    const id = e.instanceId;
-    if (id == null) return;
-    const q = quakes[id];
-    if (!q) return;
-    select(q.id === selectedId ? null : q.id);
-  };
-
-  const handleMove = (e: ThreeEvent<PointerEvent>) => {
-    e.stopPropagation();
-    const id = e.instanceId;
-    if (id == null) return;
-    const q = quakes[id];
-    if (!q) return;
-    if (hoveredId !== q.id) setHoveredId(q.id);
-    document.body.style.cursor = "pointer";
-  };
-
   return (
     <instancedMesh
       key={count}
       ref={meshRef}
       args={[undefined, undefined, count]}
-      onClick={handleClick}
-      onPointerMove={handleMove}
+      onClick={(e: ThreeEvent<MouseEvent>) => {
+        e.stopPropagation();
+        const id = e.instanceId;
+        if (id == null) return;
+        const q = quakes[id];
+        if (!q) return;
+        select(q.id === selectedId ? null : q.id);
+      }}
+      onPointerMove={(e: ThreeEvent<PointerEvent>) => {
+        e.stopPropagation();
+        const id = e.instanceId;
+        if (id == null) return;
+        const q = quakes[id];
+        if (!q) return;
+        if (hoveredId !== q.id) setHoveredId(q.id);
+        document.body.style.cursor = "pointer";
+      }}
       onPointerOut={() => {
         setHoveredId(null);
         document.body.style.cursor = "auto";
       }}
     >
-      <sphereGeometry args={[1, 16, 16]} />
-      <meshBasicMaterial
-        toneMapped={false}
-        transparent
-        opacity={0.95}
-        depthWrite={false}
-      />
+      <sphereGeometry args={[1, 20, 20]} />
+      <primitive object={material} attach="material" />
     </instancedMesh>
   );
 }

@@ -18,7 +18,7 @@ import { CameraRig } from "./CameraRig";
 import { EpicenterTracker } from "./EpicenterTracker";
 
 const GLOBE_RADIUS = 2;
-const MARKER_RADIUS = GLOBE_RADIUS * 1.01; // sit just above the surface
+const MARKER_RADIUS = GLOBE_RADIUS * 1.018; // sit just above the surface
 const ATMOSPHERE_SCALE = 1.15;
 
 // Public-domain earth day map, served from three.js's own examples (CORS-enabled).
@@ -123,7 +123,12 @@ export function Globe({ quakes }: { quakes: Quake[] }) {
         onCreated={({ gl }) => {
           gl.setClearColor("#080706");
         }}
-        style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+        }}
       >
         <ambientLight intensity={0.45} />
         <directionalLight position={[5, 3, 5]} intensity={1.35} />

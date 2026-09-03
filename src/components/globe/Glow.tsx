@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from "react";
 import * as THREE from "three";
+import { useFrame } from "@react-three/fiber";
 import type { Quake } from "../../lib/types";
 import { latLngToVec3, magToColor } from "../../lib/geo";
 import { useDashboardStore } from "../../store/useDashboardStore";
@@ -27,7 +28,7 @@ export function Glow({ quakes, radius }: { quakes: Quake[]; radius: number }) {
       colors[i * 3 + 1] = tmpColor.g;
       colors[i * 3 + 2] = tmpColor.b;
       boosts[i] =
-        q.id === selectedId ? 1.4 : newIds.has(q.id) ? 1.0 : q.mag >= 6 ? 0.45 : 0;
+        q.id === selectedId ? 1.6 : newIds.has(q.id) ? 1.15 : q.mag >= 6 ? 0.55 : 0.08;
     });
 
     const geo = new THREE.BufferGeometry();
@@ -37,7 +38,10 @@ export function Glow({ quakes, radius }: { quakes: Quake[]; radius: number }) {
     geo.setAttribute("aBoost", new THREE.BufferAttribute(boosts, 1));
 
     const mat = new THREE.ShaderMaterial({
-      uniforms: { uSize: { value: 18 } },
+      uniforms: {
+        uSize: { value: 36 },
+        uTime: { value: 0 },
+      },
       vertexShader: glowVertexShader,
       fragmentShader: glowFragmentShader,
       transparent: true,
@@ -54,6 +58,10 @@ export function Glow({ quakes, radius }: { quakes: Quake[]; radius: number }) {
       material.dispose();
     };
   }, [geometry, material]);
+
+  useFrame(({ clock }) => {
+    material.uniforms.uTime.value = clock.elapsedTime;
+  });
 
   if (quakes.length === 0) return null;
 
