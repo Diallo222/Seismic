@@ -1,0 +1,86 @@
+{
+  "app": {
+    "skipToTelemetry": "Ir a la telemetría",
+    "feedError": "Error al cargar el feed de USGS"
+  },
+  "controls": {
+    "feedWindow": "Ventana de tiempo",
+    "feed": {
+      "hour": "Última hora",
+      "day": "Último día",
+      "week": "Última semana",
+      "significant": "Significativo"
+    },
+    "minMagnitude": "Magnitud mín.",
+    "minMagnitudeAria": "Magnitud mínima",
+    "tsunamiOnly": "Solo alertas de tsunami",
+    "magnitude": "Magnitud",
+    "dataSource": "Datos · USGS"
+  },
+  "states": {
+    "feedError": "Error del feed",
+    "retry": "Reintentar"
+  },
+  "mobileSheet": {
+    "filters": "Filtros",
+    "feed": "Feed",
+    "eventFeed": "Feed de eventos",
+    "closeSheet": "Cerrar panel"
+  },
+  "boot": {
+    "title": "Seismic",
+    "subtitle": "Observando la Tierra",
+    "skipHint": "Haz clic o pulsa una tecla para omitir"
+  },
+  "wordmark": {
+    "title": "Seismic",
+    "live": "En vivo",
+    "tagline": "Actividad sísmica en vivo, en todo el mundo"
+  },
+  "chartsRail": {
+    "activity": "Actividad"
+  },
+  "rightRail": {
+    "openPanel": "Abrir panel del feed",
+    "closePanel": "Cerrar panel del feed",
+    "feedCount": "Feed · {{count}}",
+    "feed": "Feed"
+  },
+  "statCards": {
+    "quakes": "Sismos",
+    "largest": "Mayor",
+    "avgDepth": "Prof. media",
+    "updated": "Actualizado",
+    "noData": "—"
+  },
+  "quakeDetail": {
+    "closeDetail": "Cerrar detalle",
+    "depth": "Profundidad",
+    "tsunamiAlert": "Alerta de tsunami",
+    "noTsunamiAlert": "Sin alerta de tsunami",
+    "viewOnUsgs": "Ver en USGS"
+  },
+  "feedList": {
+    "noMatch": "Ningún sismo coincide con los filtros actuales",
+    "minMagFilter": "M ≥ {{mag}}",
+    "tsunamiOnlySuffix": " · solo tsunami",
+    "tsunamiOnly": "solo alertas de tsunami"
+  },
+  "charts": {
+    "magnitudeDistribution": "Distribución de magnitudes",
+    "magnitudeDistributionAria": "Gráfico de distribución de magnitudes",
+    "past24h": "Últimas 24 h",
+    "past24hAria": "Gráfico de actividad de las últimas 24 horas",
+    "peakPerHour": "pico {{count}}/h"
+  },
+  "format": {
+    "justNow": "justo ahora",
+    "minutesAgo": "hace {{count}} min",
+    "hoursAgo": "hace {{count}} h",
+    "daysAgo": "hace {{count}} d",
+    "depthKm": "{{value}} km"
+  },
+  "lang": {
+    "label": "Idioma"
+  }
+}

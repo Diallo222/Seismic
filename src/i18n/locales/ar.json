@@ -1,0 +1,86 @@
+{
+  "app": {
+    "skipToTelemetry": "الانتقال إلى بيانات القياس",
+    "feedError": "فشل تحميل بيانات USGS"
+  },
+  "controls": {
+    "feedWindow": "النطاق الزمني",
+    "feed": {
+      "hour": "الساعة الماضية",
+      "day": "اليوم الماضي",
+      "week": "الأسبوع الماضي",
+      "significant": "هامة"
+    },
+    "minMagnitude": "أدنى شدة",
+    "minMagnitudeAria": "الحد الأدنى للشدة",
+    "tsunamiOnly": "تنبيهات تسونامي فقط",
+    "magnitude": "الشدة",
+    "dataSource": "البيانات · USGS"
+  },
+  "states": {
+    "feedError": "خطأ في البيانات",
+    "retry": "إعادة المحاولة"
+  },
+  "mobileSheet": {
+    "filters": "عوامل التصفية",
+    "feed": "التدفق",
+    "eventFeed": "قائمة الأحداث",
+    "closeSheet": "إغلاق اللوحة"
+  },
+  "boot": {
+    "title": "Seismic",
+    "subtitle": "مراقبة الأرض",
+    "skipHint": "انقر أو اضغط أي مفتاح للتخطي"
+  },
+  "wordmark": {
+    "title": "Seismic",
+    "live": "مباشر",
+    "tagline": "نشاط زلزالي مباشر حول العالم"
+  },
+  "chartsRail": {
+    "activity": "النشاط"
+  },
+  "rightRail": {
+    "openPanel": "فتح لوحة التدفق",
+    "closePanel": "إغلاق لوحة التدفق",
+    "feedCount": "التدفق · {{count}}",
+    "feed": "التدفق"
+  },
+  "statCards": {
+    "quakes": "الزلازل",
+    "largest": "الأكبر",
+    "avgDepth": "متوسط العمق",
+    "updated": "آخر تحديث",
+    "noData": "—"
+  },
+  "quakeDetail": {
+    "closeDetail": "إغلاق التفاصيل",
+    "depth": "العمق",
+    "tsunamiAlert": "تنبيه تسونامي",
+    "noTsunamiAlert": "لا يوجد تنبيه تسونامي",
+    "viewOnUsgs": "عرض على USGS"
+  },
+  "feedList": {
+    "noMatch": "لا توجد زلازل مطابقة للمرشحات الحالية",
+    "minMagFilter": "M ≥ {{mag}}",
+    "tsunamiOnlySuffix": " · تسونامي فقط",
+    "tsunamiOnly": "تنبيهات تسونامي فقط"
+  },
+  "charts": {
+    "magnitudeDistribution": "توزيع الشدة",
+    "magnitudeDistributionAria": "مخطط توزيع الشدة",
+    "past24h": "آخر 24 ساعة",
+    "past24hAria": "مخطط نشاط آخر 24 ساعة",
+    "peakPerHour": "ذروة {{count}}/س"
+  },
+  "format": {
+    "justNow": "الآن",
+    "minutesAgo": "منذ {{count}} د",
+    "hoursAgo": "منذ {{count}} س",
+    "daysAgo": "منذ {{count}} ي",
+    "depthKm": "{{value}} كم"
+  },
+  "lang": {
+    "label": "اللغة"
+  }
+}

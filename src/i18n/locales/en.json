@@ -1,0 +1,86 @@
+{
+  "app": {
+    "skipToTelemetry": "Skip to telemetry",
+    "feedError": "Failed to load USGS feed"
+  },
+  "controls": {
+    "feedWindow": "Time window",
+    "feed": {
+      "hour": "Past hour",
+      "day": "Past day",
+      "week": "Past week",
+      "significant": "Significant"
+    },
+    "minMagnitude": "Min magnitude",
+    "minMagnitudeAria": "Minimum magnitude",
+    "tsunamiOnly": "Tsunami alerts only",
+    "magnitude": "Magnitude",
+    "dataSource": "Data · USGS"
+  },
+  "states": {
+    "feedError": "Feed error",
+    "retry": "Retry"
+  },
+  "mobileSheet": {
+    "filters": "Filters",
+    "feed": "Feed",
+    "eventFeed": "Event feed",
+    "closeSheet": "Close sheet"
+  },
+  "boot": {
+    "title": "Seismic",
+    "subtitle": "Observing Earth",
+    "skipHint": "Click or press any key to skip"
+  },
+  "wordmark": {
+    "title": "Seismic",
+    "live": "Live",
+    "tagline": "Live earthquake activity, worldwide"
+  },
+  "chartsRail": {
+    "activity": "Activity"
+  },
+  "rightRail": {
+    "openPanel": "Open feed panel",
+    "closePanel": "Close feed panel",
+    "feedCount": "Feed · {{count}}",
+    "feed": "Feed"
+  },
+  "statCards": {
+    "quakes": "Quakes",
+    "largest": "Largest",
+    "avgDepth": "Avg depth",
+    "updated": "Updated",
+    "noData": "—"
+  },
+  "quakeDetail": {
+    "closeDetail": "Close detail",
+    "depth": "Depth",
+    "tsunamiAlert": "Tsunami alert",
+    "noTsunamiAlert": "No tsunami alert",
+    "viewOnUsgs": "View on USGS"
+  },
+  "feedList": {
+    "noMatch": "No quakes match current filters",
+    "minMagFilter": "M ≥ {{mag}}",
+    "tsunamiOnlySuffix": " · tsunami only",
+    "tsunamiOnly": "tsunami alerts only"
+  },
+  "charts": {
+    "magnitudeDistribution": "Magnitude distribution",
+    "magnitudeDistributionAria": "Magnitude distribution chart",
+    "past24h": "Past 24h",
+    "past24hAria": "Past 24 hours activity chart",
+    "peakPerHour": "peak {{count}}/hr"
+  },
+  "format": {
+    "justNow": "just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago",
+    "depthKm": "{{value}} km"
+  },
+  "lang": {
+    "label": "Language"
+  }
+}

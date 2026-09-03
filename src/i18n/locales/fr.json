@@ -1,0 +1,86 @@
+{
+  "app": {
+    "skipToTelemetry": "Aller à la télémétrie",
+    "feedError": "Échec du chargement du flux USGS"
+  },
+  "controls": {
+    "feedWindow": "Période",
+    "feed": {
+      "hour": "Dernière heure",
+      "day": "Dernier jour",
+      "week": "Dernière semaine",
+      "significant": "Significatif"
+    },
+    "minMagnitude": "Magnitude min.",
+    "minMagnitudeAria": "Magnitude minimale",
+    "tsunamiOnly": "Alertes tsunami uniquement",
+    "magnitude": "Magnitude",
+    "dataSource": "Données · USGS"
+  },
+  "states": {
+    "feedError": "Erreur de flux",
+    "retry": "Réessayer"
+  },
+  "mobileSheet": {
+    "filters": "Filtres",
+    "feed": "Flux",
+    "eventFeed": "Flux d'événements",
+    "closeSheet": "Fermer le panneau"
+  },
+  "boot": {
+    "title": "Seismic",
+    "subtitle": "Observation de la Terre",
+    "skipHint": "Cliquez ou appuyez sur une touche pour passer"
+  },
+  "wordmark": {
+    "title": "Seismic",
+    "live": "En direct",
+    "tagline": "Activité sismique en direct, dans le monde entier"
+  },
+  "chartsRail": {
+    "activity": "Activité"
+  },
+  "rightRail": {
+    "openPanel": "Ouvrir le panneau du flux",
+    "closePanel": "Fermer le panneau du flux",
+    "feedCount": "Flux · {{count}}",
+    "feed": "Flux"
+  },
+  "statCards": {
+    "quakes": "Séismes",
+    "largest": "Plus fort",
+    "avgDepth": "Profondeur moy.",
+    "updated": "Mis à jour",
+    "noData": "—"
+  },
+  "quakeDetail": {
+    "closeDetail": "Fermer le détail",
+    "depth": "Profondeur",
+    "tsunamiAlert": "Alerte tsunami",
+    "noTsunamiAlert": "Aucune alerte tsunami",
+    "viewOnUsgs": "Voir sur l'USGS"
+  },
+  "feedList": {
+    "noMatch": "Aucun séisme ne correspond aux filtres actuels",
+    "minMagFilter": "M ≥ {{mag}}",
+    "tsunamiOnlySuffix": " · tsunami uniquement",
+    "tsunamiOnly": "alertes tsunami uniquement"
+  },
+  "charts": {
+    "magnitudeDistribution": "Distribution des magnitudes",
+    "magnitudeDistributionAria": "Graphique de distribution des magnitudes",
+    "past24h": "24 dernières heures",
+    "past24hAria": "Graphique d'activité des 24 dernières heures",
+    "peakPerHour": "pic {{count}}/h"
+  },
+  "format": {
+    "justNow": "à l'instant",
+    "minutesAgo": "il y a {{count}} min",
+    "hoursAgo": "il y a {{count}} h",
+    "daysAgo": "il y a {{count}} j",
+    "depthKm": "{{value}} km"
+  },
+  "lang": {
+    "label": "Langue"
+  }
+}
