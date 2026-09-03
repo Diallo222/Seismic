@@ -13,7 +13,9 @@ import {
 import { Markers } from "./Markers";
 import { Glow } from "./Glow";
 import { Ripples } from "./Ripples";
+import { SelectionHalo } from "./SelectionHalo";
 import { CameraRig } from "./CameraRig";
+import { EpicenterTracker } from "./EpicenterTracker";
 
 const GLOBE_RADIUS = 2;
 const MARKER_RADIUS = GLOBE_RADIUS * 1.01; // sit just above the surface
@@ -48,7 +50,7 @@ function Atmosphere() {
     () =>
       new THREE.ShaderMaterial({
         uniforms: {
-          uColor: { value: new THREE.Color("#38bdf8") },
+          uColor: { value: new THREE.Color("#D4A574") },
           uPower: { value: 4 },
         },
         vertexShader: atmosphereVertexShader,
@@ -108,37 +110,51 @@ export function Globe({ quakes }: { quakes: Quake[] }) {
 
   const flyTarget = useMemo(
     () => (selected ? latLngToVec3(selected.lat, selected.lng, 1) : null),
-    [selected?.lat, selected?.lng],
+    [selected],
   );
 
   return (
-    <Canvas
-      camera={{ position: [0, 0, 6], fov: 45 }}
-      dpr={isMobile ? [1, 1.5] : [1, 2]}
-      frameloop={tabVisible ? "always" : "never"}
-    >
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[5, 3, 5]} intensity={1.5} />
-      <Suspense fallback={<GlobeFallback />}>
-        <Earth />
-      </Suspense>
-      <Atmosphere />
-      <Markers quakes={quakes} radius={MARKER_RADIUS} />
-      {!isMobile && (
-        <>
-          <Glow quakes={quakes} radius={MARKER_RADIUS} />
-          <Ripples quakes={quakes} radius={MARKER_RADIUS} />
-        </>
-      )}
-      <CameraRig target={flyTarget} />
-      <OrbitControls
-        ref={controlsRef}
-        enablePan={false}
-        minDistance={3}
-        maxDistance={12}
-        autoRotate
-        autoRotateSpeed={0.4}
-      />
-    </Canvas>
+    <div className="absolute inset-0 z-0">
+      <Canvas
+        camera={{ position: [0, 0, 6], fov: 45 }}
+        dpr={isMobile ? [1, 1.5] : [1, 2]}
+        frameloop={tabVisible ? "always" : "never"}
+        gl={{ antialias: true, alpha: false }}
+        onCreated={({ gl }) => {
+          gl.setClearColor("#080706");
+        }}
+        style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
+      >
+        <ambientLight intensity={0.45} />
+        <directionalLight position={[5, 3, 5]} intensity={1.35} />
+        <Suspense fallback={<GlobeFallback />}>
+          <Earth />
+        </Suspense>
+        <Atmosphere />
+        <Markers quakes={quakes} radius={MARKER_RADIUS} />
+        {!isMobile && (
+          <>
+            <Glow quakes={quakes} radius={MARKER_RADIUS} />
+            <Ripples quakes={quakes} radius={MARKER_RADIUS} />
+            {selected && (
+              <SelectionHalo quake={selected} radius={MARKER_RADIUS} />
+            )}
+          </>
+        )}
+        {isMobile && selected && (
+          <SelectionHalo quake={selected} radius={MARKER_RADIUS} />
+        )}
+        <CameraRig target={flyTarget} />
+        <EpicenterTracker quake={selected} />
+        <OrbitControls
+          ref={controlsRef}
+          enablePan={false}
+          minDistance={3}
+          maxDistance={12}
+          autoRotate={!selected}
+          autoRotateSpeed={0.4}
+        />
+      </Canvas>
+    </div>
   );
 }
