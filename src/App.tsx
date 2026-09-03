@@ -6,6 +6,7 @@ import { Panel } from "./components/layout/Panel";
 import { StatCards } from "./components/dashboard/StatCards";
 import { FeedList } from "./components/dashboard/FeedList";
 import { Filters } from "./components/dashboard/Filters";
+import { Globe } from "./components/globe/Globe";
 
 function App() {
   const feed = useDashboardStore((s) => s.feed);
@@ -26,9 +27,8 @@ function App() {
     <div className="grid h-screen grid-rows-[auto_1fr] bg-neutral-950 text-white">
       <Header />
       <div className="grid grid-cols-1 overflow-hidden md:grid-cols-[1fr_380px]">
-        <main className="flex items-center justify-center text-white/30">
-          {/* Globe mounts here in Phase 2 */}
-          <span className="text-sm">Globe coming in Phase 2</span>
+        <main className="relative">
+          <Globe quakes={filtered} />
         </main>
         <Panel>
           <Filters />
