@@ -2,35 +2,86 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#080706" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="robots" content="index, follow" />
+    <title>Seismic — Live Earthquake Dashboard</title>
+    <meta
+      name="description"
+      content="Watch live earthquakes on a 3D globe. Real-time USGS data, magnitude filters, and epicenter fly-to — a cinematic observatory for global seismic activity."
+    />
+    <meta
+      name="keywords"
+      content="earthquakes, USGS, 3D globe, seismic activity, live earthquake map, magnitude"
+    />
+    <meta name="author" content="Seismic" />
+    <link rel="canonical" href="https://seismic.diallo.digital/" />
+
     <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
     <link rel="apple-touch-icon" href="/favicon.svg?v=2" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preconnect"
+      href="https://earthquake.usgs.gov"
+      crossorigin
+    />
     <link
       href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
-    <meta
-      name="description"
-      content="A real-time 3D earthquake dashboard powered by live USGS data."
-    />
+
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Seismic" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:url" content="https://seismic.diallo.digital/" />
     <meta property="og:title" content="Seismic — Live Earthquake Dashboard" />
     <meta
       property="og:description"
-      content="A real-time 3D earthquake dashboard powered by live USGS data."
+      content="Watch live earthquakes on a 3D globe. Real-time USGS data, magnitude filters, and epicenter fly-to."
     />
+    <meta
+      property="og:image"
+      content="https://seismic.diallo.digital/og.jpg"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Seismic: a 3D globe of live earthquake activity" />
+
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Seismic — Live Earthquake Dashboard" />
     <meta
       name="twitter:description"
-      content="A real-time 3D earthquake dashboard powered by live USGS data."
+      content="Watch live earthquakes on a 3D globe. Real-time USGS data, magnitude filters, and epicenter fly-to."
     />
-    <title>Seismic — Live Earthquake Dashboard</title>
+    <meta
+      name="twitter:image"
+      content="https://seismic.diallo.digital/og.jpg"
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Seismic",
+        "url": "https://seismic.diallo.digital/",
+        "description": "A real-time 3D earthquake dashboard powered by live USGS data.",
+        "applicationCategory": "NewsApplication",
+        "operatingSystem": "Any",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "creator": { "@type": "Person", "name": "Diallo" },
+        "citation": "U.S. Geological Survey Earthquake Hazards Program"
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      Seismic is a live 3D earthquake dashboard using USGS real-time feeds.
+      Enable JavaScript to view the globe.
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
