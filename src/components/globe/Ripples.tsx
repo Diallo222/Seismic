@@ -2,18 +2,17 @@ import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { useFrame, useThree } from "@react-three/fiber";
 import type { Quake } from "../../lib/types";
-import { latLngToVec3, magToColor } from "../../lib/geo";
+import { latLngToVec3, magToColor, NEW_MARKER_COLOR } from "../../lib/geo";
 import { useDashboardStore } from "../../store/useDashboardStore";
 import {
   rippleFragmentShader,
   rippleVertexShader,
 } from "../../shaders/ripple.glsl";
 
-const MIN_RIPPLE_MAG = 4.5; // large quakes loop a ring even without a fresh arrival
-const NEW_QUAKE_COLOR = "#ffffff";
-const RING_SIZE = 0.55;
-const CYCLE_SECONDS = 4;
-const DURATION_SECONDS = 2;
+const MIN_RIPPLE_MAG = 4.5;
+const RING_SIZE = 0.72;
+const CYCLE_SECONDS = 4.5;
+const DURATION_SECONDS = 2.2;
 
 /** Deterministic per-quake phase offset so looping rings don't pulse in lockstep. */
 function hashPhase(id: string, cycle: number) {
@@ -31,24 +30,25 @@ function Ripple({
   radius: number;
   isNew: boolean;
 }) {
-  // Freeze the "just arrived" flag at mount — later expiry (newIds clearing
-  // after a few seconds) shouldn't yank a phase already in flight.
   const wasNewRef = useRef(isNew);
   const clock = useThree((s) => s.clock);
 
-  const { position, quaternion } = useMemo(() => {
+  const { position, quaternion, ringScale } = useMemo(() => {
     const [x, y, z] = latLngToVec3(quake.lat, quake.lng, radius);
     const dir = new THREE.Vector3(x, y, z).normalize();
     const quat = new THREE.Quaternion().setFromUnitVectors(
       new THREE.Vector3(0, 0, 1),
-      dir
+      dir,
     );
-    return { position: new THREE.Vector3(x, y, z), quaternion: quat };
-  }, [quake.lat, quake.lng, radius]);
+    const scale = RING_SIZE * (0.85 + Math.min(quake.mag, 8) * 0.06);
+    return {
+      position: new THREE.Vector3(x, y, z),
+      quaternion: quat,
+      ringScale: scale,
+    };
+  }, [quake.lat, quake.lng, quake.mag, radius]);
 
   const material = useMemo(() => {
-    // A freshly-arrived quake gets a one-shot burst starting at age 0 right
-    // now; everyone else gets a hashed phase so ambient loops desync.
     const phase = wasNewRef.current
       ? (CYCLE_SECONDS - (clock.elapsedTime % CYCLE_SECONDS)) % CYCLE_SECONDS
       : hashPhase(quake.id, CYCLE_SECONDS);
@@ -58,11 +58,14 @@ function Ripple({
         uTime: { value: 0 },
         uPhase: { value: phase },
         uCycle: { value: CYCLE_SECONDS },
-        uDuration: { value: DURATION_SECONDS },
-        uSpeed: { value: 0.5 },
+        uDuration: {
+          value: wasNewRef.current ? DURATION_SECONDS * 1.15 : DURATION_SECONDS,
+        },
+        uSpeed: { value: wasNewRef.current ? 0.58 : 0.42 },
+        uMag: { value: quake.mag },
         uColor: {
           value: new THREE.Color(
-            wasNewRef.current ? NEW_QUAKE_COLOR : magToColor(quake.mag)
+            wasNewRef.current ? NEW_MARKER_COLOR : magToColor(quake.mag),
           ),
         },
       },
@@ -73,8 +76,6 @@ function Ripple({
       blending: THREE.AdditiveBlending,
       side: THREE.DoubleSide,
     });
-    // Deliberately excludes `isNew`: wasNewRef freezes it at mount so a later
-    // expiry (newIds clearing) can't yank the phase of a burst already playing.
   }, [quake.id, quake.mag, clock]);
 
   useEffect(() => () => material.dispose(), [material]);
@@ -84,8 +85,13 @@ function Ripple({
   });
 
   return (
-    <mesh position={position} quaternion={quaternion} raycast={() => null}>
-      <planeGeometry args={[RING_SIZE, RING_SIZE]} />
+    <mesh
+      position={position}
+      quaternion={quaternion}
+      scale={ringScale}
+      raycast={() => null}
+    >
+      <planeGeometry args={[1, 1]} />
       <primitive object={material} attach="material" />
     </mesh>
   );
@@ -102,7 +108,7 @@ export function Ripples({
 
   const active = useMemo(
     () => quakes.filter((q) => q.mag >= MIN_RIPPLE_MAG || newIds.has(q.id)),
-    [quakes, newIds]
+    [quakes, newIds],
   );
 
   return (

@@ -1,5 +1,4 @@
-// Expanding shockwave ring from an epicenter, fading over uDuration seconds.
-// uPhase desyncs instances; uCycle makes it repeat so the globe stays alive.
+// Expanding shockwave ring — thin crisp ring with soft trailing edge.
 export const rippleVertexShader = /* glsl */ `
   varying vec2 vUv;
 
@@ -15,6 +14,7 @@ export const rippleFragmentShader = /* glsl */ `
   uniform float uCycle;
   uniform float uDuration;
   uniform float uSpeed;
+  uniform float uMag;
   uniform vec3 uColor;
   varying vec2 vUv;
 
@@ -26,12 +26,17 @@ export const rippleFragmentShader = /* glsl */ `
     float dist = length(centered);
 
     float radius = age * uSpeed;
-    float ring = smoothstep(radius, radius - 0.05, dist)
-               - smoothstep(radius - 0.05, radius - 0.14, dist);
-    float fade = 1.0 - clamp(age / uDuration, 0.0, 1.0);
+    // Thin leading edge + soft wake
+    float ring =
+      smoothstep(radius + 0.02, radius, dist) -
+      smoothstep(radius, radius - 0.08, dist);
 
-    float alpha = ring * fade * smoothstep(1.05, 0.95, dist);
-    if (alpha <= 0.001) discard;
+    float fade = pow(1.0 - clamp(age / uDuration, 0.0, 1.0), 1.35);
+    float magBoost = clamp(uMag / 7.0, 0.35, 1.15);
+    float disc = smoothstep(1.05, 0.9, dist);
+
+    float alpha = ring * fade * disc * magBoost;
+    if (alpha <= 0.004) discard;
 
     gl_FragColor = vec4(uColor, alpha);
   }
