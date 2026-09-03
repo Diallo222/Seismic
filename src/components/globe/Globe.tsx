@@ -26,7 +26,7 @@ const EARTH_TEXTURE_URL =
 function Earth() {
   const texture = useTexture(EARTH_TEXTURE_URL);
   return (
-    <mesh rotation={[0, Math.PI, 0]}>
+    <mesh>
       <sphereGeometry args={[GLOBE_RADIUS, 64, 64]} />
       <meshStandardMaterial map={texture} roughness={0.9} metalness={0} />
     </mesh>
@@ -58,7 +58,7 @@ function Atmosphere() {
         blending: THREE.AdditiveBlending,
         depthWrite: false,
       }),
-    []
+    [],
   );
 
   useEffect(() => () => material.dispose(), [material]);
@@ -87,7 +87,7 @@ function useTabVisible() {
 const MOBILE_QUERY = "(max-width: 767px)";
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(
-    () => window.matchMedia(MOBILE_QUERY).matches
+    () => window.matchMedia(MOBILE_QUERY).matches,
   );
   useEffect(() => {
     const mql = window.matchMedia(MOBILE_QUERY);
