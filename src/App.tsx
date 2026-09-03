@@ -6,6 +6,7 @@ import { Panel } from "./components/layout/Panel";
 import { StatCards } from "./components/dashboard/StatCards";
 import { FeedList } from "./components/dashboard/FeedList";
 import { Filters } from "./components/dashboard/Filters";
+import { QuakeDetail } from "./components/dashboard/QuakeDetail";
 import { Globe } from "./components/globe/Globe";
 import { MagnitudeHistogram } from "./components/charts/MagnitudeHistogram";
 import { TimelineChart } from "./components/charts/TimelineChart";
@@ -13,6 +14,7 @@ import { TimelineChart } from "./components/charts/TimelineChart";
 function App() {
   const feed = useDashboardStore((s) => s.feed);
   const filters = useDashboardStore((s) => s.filters);
+  const selectedId = useDashboardStore((s) => s.selectedId);
   const { data: quakes, isLoading, isError, error } = useQuakes(feed);
 
   const filtered = useMemo(() => {
@@ -25,12 +27,15 @@ function App() {
     );
   }, [quakes, filters]);
 
+  const selectedQuake = filtered.find((q) => q.id === selectedId) ?? null;
+
   return (
     <div className="grid h-screen grid-rows-[auto_1fr] bg-neutral-950 text-white">
       <Header />
       <div className="grid grid-cols-1 overflow-hidden md:grid-cols-[1fr_380px]">
         <main className="relative">
           <Globe quakes={filtered} />
+          <QuakeDetail quake={selectedQuake} />
         </main>
         <Panel>
           <Filters />

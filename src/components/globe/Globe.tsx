@@ -1,8 +1,12 @@
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
+import type { ComponentRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, useTexture } from "@react-three/drei";
 import type { Quake } from "../../lib/types";
+import { latLngToVec3 } from "../../lib/geo";
+import { useDashboardStore } from "../../store/useDashboardStore";
 import { Markers } from "./Markers";
+import { CameraRig } from "./CameraRig";
 
 const GLOBE_RADIUS = 2;
 const MARKER_RADIUS = GLOBE_RADIUS * 1.01; // sit just above the surface
@@ -43,6 +47,13 @@ function useTabVisible() {
 
 export function Globe({ quakes }: { quakes: Quake[] }) {
   const tabVisible = useTabVisible();
+  const controlsRef = useRef<ComponentRef<typeof OrbitControls>>(null);
+
+  const selectedId = useDashboardStore((s) => s.selectedId);
+  const selected = quakes.find((q) => q.id === selectedId) ?? null;
+  const flyTarget = selected
+    ? latLngToVec3(selected.lat, selected.lng, 1)
+    : null;
 
   return (
     <Canvas
@@ -56,7 +67,9 @@ export function Globe({ quakes }: { quakes: Quake[] }) {
         <Earth />
         <Markers quakes={quakes} radius={MARKER_RADIUS} />
       </Suspense>
+      <CameraRig target={flyTarget} controlsRef={controlsRef} />
       <OrbitControls
+        ref={controlsRef}
         enablePan={false}
         minDistance={3}
         maxDistance={12}
