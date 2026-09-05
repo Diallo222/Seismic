@@ -16,6 +16,7 @@ import { Ripples } from "./Ripples";
 import { SelectionHalo } from "./SelectionHalo";
 import { CameraRig } from "./CameraRig";
 import { EpicenterTracker } from "./EpicenterTracker";
+import { ResponsiveFraming, fitDistance } from "./ResponsiveFraming";
 
 const GLOBE_RADIUS = 2;
 const MARKER_RADIUS = GLOBE_RADIUS * 1.018; // sit just above the surface
@@ -84,8 +85,8 @@ function useTabVisible() {
   return visible;
 }
 
-// The globe is heavy on phones — drop the shader-driven glow/ripple layers
-// there and keep solid markers, per project.md §9.
+// Phones: keep the cheap point-sprite Glow (markers read as invisible without
+// it) but drop animated Ripples. DPR is also capped below.
 const MOBILE_QUERY = "(max-width: 767px)";
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(
@@ -116,19 +117,15 @@ export function Globe({ quakes }: { quakes: Quake[] }) {
   return (
     <div className="absolute inset-0 z-0">
       <Canvas
-        camera={{ position: [0, 0, 6], fov: 45 }}
+        camera={{ position: [0, 0, fitDistance(16 / 9)], fov: 45 }}
         dpr={isMobile ? [1, 1.5] : [1, 2]}
         frameloop={tabVisible ? "always" : "never"}
         gl={{ antialias: true, alpha: false }}
+        resize={{ scroll: false, debounce: { scroll: 0, resize: 0 } }}
         onCreated={({ gl }) => {
           gl.setClearColor("#080706");
         }}
-        style={{
-          position: "absolute",
-          inset: 0,
-          width: "100%",
-          height: "100%",
-        }}
+        style={{ position: "absolute", inset: 0 }}
       >
         <ambientLight intensity={0.45} />
         <directionalLight position={[5, 3, 5]} intensity={1.35} />
@@ -137,25 +134,20 @@ export function Globe({ quakes }: { quakes: Quake[] }) {
         </Suspense>
         <Atmosphere />
         <Markers quakes={quakes} radius={MARKER_RADIUS} />
-        {!isMobile && (
-          <>
-            <Glow quakes={quakes} radius={MARKER_RADIUS} />
-            <Ripples quakes={quakes} radius={MARKER_RADIUS} />
-            {selected && (
-              <SelectionHalo quake={selected} radius={MARKER_RADIUS} />
-            )}
-          </>
-        )}
-        {isMobile && selected && (
+        <Glow quakes={quakes} radius={MARKER_RADIUS} />
+        {!isMobile && <Ripples quakes={quakes} radius={MARKER_RADIUS} />}
+        {selected && (
           <SelectionHalo quake={selected} radius={MARKER_RADIUS} />
         )}
+        <ResponsiveFraming />
         <CameraRig target={flyTarget} />
         <EpicenterTracker quake={selected} />
         <OrbitControls
           ref={controlsRef}
+          makeDefault
           enablePan={false}
           minDistance={3}
-          maxDistance={12}
+          maxDistance={24}
           autoRotate={!selected}
           autoRotateSpeed={0.4}
         />

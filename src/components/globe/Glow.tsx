@@ -28,7 +28,7 @@ export function Glow({ quakes, radius }: { quakes: Quake[]; radius: number }) {
       colors[i * 3 + 1] = tmpColor.g;
       colors[i * 3 + 2] = tmpColor.b;
       boosts[i] =
-        q.id === selectedId ? 1.6 : newIds.has(q.id) ? 1.15 : q.mag >= 6 ? 0.55 : 0.08;
+        q.id === selectedId ? 1.6 : newIds.has(q.id) ? 1.15 : q.mag >= 6 ? 0.55 : 0.22;
     });
 
     const geo = new THREE.BufferGeometry();

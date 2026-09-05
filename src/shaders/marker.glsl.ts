@@ -31,10 +31,11 @@ export const markerFragmentShader = /* glsl */ `
     vec3 v = normalize(vViewW);
     float facing = abs(dot(n, v));
 
-    // Hot center when facing camera, soft falloff toward the limb
+    // Hot center when facing camera, soft falloff toward the limb.
+    // Floor alpha high enough that beads stay readable without Glow.
     float core = pow(facing, 3.2);
     float rim = pow(1.0 - facing, 2.4);
-    float alpha = clamp(0.28 + core * 0.85 + rim * 0.12, 0.0, 1.0);
+    float alpha = clamp(0.45 + core * 0.75 + rim * 0.15, 0.0, 1.0);
 
     vec3 col = vColor * (0.5 + core * 1.25) + vec3(1.0) * core * 0.4;
     gl_FragColor = vec4(col, alpha);

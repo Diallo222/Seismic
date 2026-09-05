@@ -60,15 +60,21 @@ export function Markers({
     if (!mesh) return;
 
     // Per-instance color for the custom shader (instanceColorAttr).
+    // Always re-bind to the current geometry — remounts can leave a stale attr.
     let colorAttr = colorAttrRef.current;
     if (!colorAttr || colorAttr.count !== count) {
       colorAttr = new THREE.InstancedBufferAttribute(
         new Float32Array(count * 3),
         3,
       );
-      mesh.geometry.setAttribute("instanceColorAttr", colorAttr);
       colorAttrRef.current = colorAttr;
     }
+    mesh.geometry.setAttribute("instanceColorAttr", colorAttr);
+
+    // Instances sit on the globe (~r=2); default unit-sphere bounds at origin
+    // can frustum-cull the whole batch under extreme aspects.
+    mesh.frustumCulled = false;
+    mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
 
     selectedIndexRef.current = -1;
 
