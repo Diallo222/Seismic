@@ -32,7 +32,7 @@ export function FeedPills() {
             aria-selected={active}
             onClick={() => setFeed(opt.value)}
             title={label}
-            className={`min-h-9 shrink-0 cursor-pointer rounded-[var(--radius-sm)] px-2 font-mono text-[10px] tracking-wide transition-colors duration-200 sm:px-2.5 sm:text-[11px] ${
+            className={`min-h-11 shrink-0 cursor-pointer rounded-[var(--radius-sm)] px-2.5 font-mono text-[10px] tracking-wide transition-colors duration-200 sm:px-3 sm:text-[11px] ${
               active
                 ? "bg-[var(--accent)] text-[var(--ink)]"
                 : "text-[var(--muted)] hover:text-[var(--ink)]"

@@ -1,21 +1,26 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import { usePrefersReducedMotion } from "../../lib/usePrefersReducedMotion";
 
 const BOOT_KEY = "seismic-boot-seen";
 const BOOT_MS = 1200;
 
-function prefersReducedMotion() {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
 export function BootCover() {
   const { t } = useTranslation();
+  const prefersReducedMotion = usePrefersReducedMotion();
   const [visible, setVisible] = useState(() => {
     if (typeof window === "undefined") return false;
-    if (prefersReducedMotion()) return false;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
     return sessionStorage.getItem(BOOT_KEY) !== "1";
   });
+
+  useEffect(() => {
+    if (prefersReducedMotion && visible) {
+      sessionStorage.setItem(BOOT_KEY, "1");
+      setVisible(false);
+    }
+  }, [prefersReducedMotion, visible]);
 
   useEffect(() => {
     if (!visible) return;

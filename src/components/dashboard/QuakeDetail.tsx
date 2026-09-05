@@ -42,7 +42,7 @@ export function QuakeDetail({
             <button
               onClick={() => select(null)}
               aria-label={t("quakeDetail.closeDetail")}
-              className="absolute end-2.5 top-2.5 flex h-9 w-9 cursor-pointer items-center justify-center rounded-[var(--radius-sm)] text-[var(--muted)] transition-colors hover:text-[var(--ink)]"
+              className="absolute end-2.5 top-2.5 flex h-11 w-11 cursor-pointer items-center justify-center rounded-[var(--radius-sm)] text-[var(--muted)] transition-colors hover:text-[var(--ink)]"
             >
               <X size={16} strokeWidth={1.75} />
             </button>

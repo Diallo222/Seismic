@@ -1,5 +1,19 @@
 /** One-shot observatory tick — synthesized so we don't ship a binary asset. */
+
+const SOUND_KEY = "seismic-sound";
+
 let ctx: AudioContext | null = null;
+let muted = readMuted();
+const listeners = new Set<() => void>();
+
+function readMuted(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return localStorage.getItem(SOUND_KEY) === "off";
+  } catch {
+    return false;
+  }
+}
 
 function getCtx(): AudioContext | null {
   if (typeof window === "undefined") return null;
@@ -12,8 +26,31 @@ function getCtx(): AudioContext | null {
   return ctx;
 }
 
-/** Soft copper tick — safe to call from a user gesture (marker click). */
+export function isSoundMuted(): boolean {
+  return muted;
+}
+
+export function setSoundMuted(next: boolean) {
+  muted = next;
+  try {
+    localStorage.setItem(SOUND_KEY, next ? "off" : "on");
+  } catch {
+    /* ignore quota / private mode */
+  }
+  listeners.forEach((fn) => fn());
+}
+
+export function subscribeSoundMuted(onStoreChange: () => void): () => void {
+  listeners.add(onStoreChange);
+  return () => {
+    listeners.delete(onStoreChange);
+  };
+}
+
+/** Soft copper tick — safe to call from a user gesture (marker / feed click). */
 export function playMarkerClick() {
+  if (muted) return;
+
   const audio = getCtx();
   if (!audio) return;
 

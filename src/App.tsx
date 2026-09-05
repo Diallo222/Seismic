@@ -13,6 +13,7 @@ import { GrainVignette } from "./components/hud/GrainVignette";
 import { BootCover } from "./components/hud/BootCover";
 import { Wordmark } from "./components/hud/Wordmark";
 import { LangSwitcher } from "./components/hud/LangSwitcher";
+import { SoundToggle } from "./components/hud/SoundToggle";
 import { FeedPills, MagLegend } from "./components/hud/Controls";
 import { RightRail } from "./components/hud/RightRail";
 import { ChartsRail } from "./components/hud/ChartsRail";
@@ -40,8 +41,9 @@ function App() {
   const selectedId = useDashboardStore((s) => s.selectedId);
   const queryClient = useQueryClient();
   const isXl = useIsXl();
-  const { data: quakes, isLoading, isError, error, refetch } = useQuakes(feed);
-  useQuakeDiff(quakes, feed);
+  const { data: quakes, isLoading, isError, error, refetch, isPlaceholderData } =
+    useQuakes(feed);
+  useQuakeDiff(quakes, feed, isPlaceholderData);
 
   const filtered = useMemo(() => {
     if (!quakes) return [];
@@ -52,6 +54,10 @@ function App() {
         (!filters.tsunamiOnly || q.tsunami),
     );
   }, [quakes, filters]);
+
+  const totalUnfiltered = quakes?.length ?? 0;
+  // With keepPreviousData, isLoading is only true on the cold first fetch.
+  const showLoading = isLoading && !quakes;
 
   const selectedQuake = filtered.find((q) => q.id === selectedId) ?? null;
 
@@ -80,14 +86,21 @@ function App() {
       >
         <div className="absolute start-5 top-5 flex flex-col gap-3">
           <Wordmark />
-          <LangSwitcher />
+          <div className="flex items-center gap-2">
+            <LangSwitcher />
+            <SoundToggle />
+          </div>
         </div>
 
         <div className="absolute end-5 top-5">
           <FeedPills />
         </div>
 
-        <RightRail quakes={filtered} loading={isLoading} />
+        <RightRail
+          quakes={filtered}
+          totalUnfiltered={totalUnfiltered}
+          loading={showLoading}
+        />
 
         <div className="absolute bottom-5 start-5 flex max-w-sm flex-col gap-3">
           {isError && (
@@ -97,7 +110,7 @@ function App() {
             />
           )}
           {selectedQuake && <QuakeDetail quake={selectedQuake} />}
-          {isLoading ? (
+          {showLoading ? (
             <LoadingSkeleton />
           ) : (
             !isError && <StatCards quakes={filtered} />
@@ -105,7 +118,7 @@ function App() {
         </div>
 
         <div className="absolute bottom-5 start-1/2 hidden w-[min(480px,36vw)] -translate-x-1/2 xl:block">
-          {!isLoading && !isError && (
+          {!showLoading && !isError && (
             <ChartsRail defaultOpen={isXl}>
               <TimelineChart quakes={filtered} />
               <MagnitudeHistogram quakes={filtered} />
@@ -114,7 +127,7 @@ function App() {
         </div>
 
         <div className="absolute bottom-5 end-5 flex w-[min(100%,320px)] flex-col gap-2">
-          {!isLoading && !isError && (
+          {!showLoading && !isError && (
             <div className="xl:hidden">
               <ChartsRail defaultOpen={false}>
                 <TimelineChart quakes={filtered} />
@@ -128,10 +141,13 @@ function App() {
 
       {/* Mobile HUD */}
       <div className="pointer-events-none absolute inset-0 z-10 md:hidden">
-        <div className="absolute inset-x-3 top-3 flex flex-col gap-2">
+        <div className="absolute inset-x-3 top-3 flex flex-col gap-2 pt-[env(safe-area-inset-top)]">
           <Wordmark />
           <div className="flex items-center justify-between gap-2">
-            <LangSwitcher />
+            <div className="flex items-center gap-2">
+              <LangSwitcher />
+              <SoundToggle />
+            </div>
             <FeedPills />
           </div>
         </div>
@@ -145,7 +161,12 @@ function App() {
           </div>
         )}
 
-        <MobileSheet quakes={filtered} selectedQuake={selectedQuake} />
+        <MobileSheet
+          quakes={filtered}
+          totalUnfiltered={totalUnfiltered}
+          selectedQuake={selectedQuake}
+          loading={showLoading}
+        />
       </div>
 
       <BootCover />

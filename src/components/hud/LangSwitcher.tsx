@@ -20,7 +20,7 @@ export function LangSwitcher() {
             onClick={() => void i18n.changeLanguage(lng.code)}
             aria-pressed={selected}
             title={lng.label}
-            className={`min-h-8 cursor-pointer rounded-[var(--radius-sm)] px-2 font-mono text-[10px] uppercase tracking-[0.16em] transition-colors duration-200 ${
+            className={`min-h-11 min-w-11 cursor-pointer rounded-[var(--radius-sm)] px-2.5 font-mono text-[10px] uppercase tracking-[0.16em] transition-colors duration-200 ${
               selected
                 ? "bg-[var(--accent)] text-[var(--ink)]"
                 : "text-[var(--muted)] hover:text-[var(--ink)]"

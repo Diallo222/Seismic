@@ -17,14 +17,14 @@ import { SelectionHalo } from "./SelectionHalo";
 import { CameraRig } from "./CameraRig";
 import { EpicenterTracker } from "./EpicenterTracker";
 import { ResponsiveFraming, fitDistance } from "./ResponsiveFraming";
+import { usePrefersReducedMotion } from "../../lib/usePrefersReducedMotion";
 
 const GLOBE_RADIUS = 2;
 const MARKER_RADIUS = GLOBE_RADIUS * 1.018; // sit just above the surface
 const ATMOSPHERE_SCALE = 1.15;
 
-// Public-domain earth day map, served from three.js's own examples (CORS-enabled).
-const EARTH_TEXTURE_URL =
-  "https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg";
+// Self-hosted day map — avoid depending on threejs.org at runtime.
+const EARTH_TEXTURE_URL = "/textures/earth_atmos_2048.jpg";
 
 function Earth() {
   const texture = useTexture(EARTH_TEXTURE_URL);
@@ -104,6 +104,7 @@ function useIsMobile() {
 export function Globe({ quakes }: { quakes: Quake[] }) {
   const tabVisible = useTabVisible();
   const isMobile = useIsMobile();
+  const prefersReducedMotion = usePrefersReducedMotion();
   const controlsRef = useRef<ComponentRef<typeof OrbitControls>>(null);
 
   const selectedId = useDashboardStore((s) => s.selectedId);
@@ -148,7 +149,7 @@ export function Globe({ quakes }: { quakes: Quake[] }) {
           enablePan={false}
           minDistance={3}
           maxDistance={24}
-          autoRotate={!selected}
+          autoRotate={!selected && !prefersReducedMotion}
           autoRotateSpeed={0.4}
         />
       </Canvas>
