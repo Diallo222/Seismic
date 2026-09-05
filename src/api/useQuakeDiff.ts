@@ -7,20 +7,27 @@ import { useDashboardStore } from "../store/useDashboardStore";
  * (present now, absent last time) in the store. Skips the very first load
  * of a feed — everything is "new" then, and we don't want the globe to
  * ripple-storm on mount or on switching feeds.
+ *
+ * Also skips placeholder data from keepPreviousData so a feed switch does
+ * not baseline against the previous window's ids.
  */
-export function useQuakeDiff(quakes: Quake[] | undefined, feed: FeedWindow) {
+export function useQuakeDiff(
+  quakes: Quake[] | undefined,
+  feed: FeedWindow,
+  isPlaceholderData = false,
+) {
   const seenIds = useRef<Set<string> | null>(null);
   const lastFeed = useRef<FeedWindow | null>(null);
   const markNewQuakes = useDashboardStore((s) => s.markNewQuakes);
 
   useEffect(() => {
-    if (!quakes) return;
-
     if (feed !== lastFeed.current) {
       // Switched feed window — different id universe, not "new" arrivals.
       seenIds.current = null;
       lastFeed.current = feed;
     }
+
+    if (!quakes || isPlaceholderData) return;
 
     if (seenIds.current) {
       const previouslySeen = seenIds.current;
@@ -31,5 +38,5 @@ export function useQuakeDiff(quakes: Quake[] | undefined, feed: FeedWindow) {
     }
 
     seenIds.current = new Set(quakes.map((q) => q.id));
-  }, [quakes, feed, markNewQuakes]);
+  }, [quakes, feed, markNewQuakes, isPlaceholderData]);
 }

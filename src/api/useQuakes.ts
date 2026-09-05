@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { fetchQuakes } from "./usgs";
 import type { FeedWindow } from "../lib/types";
 
@@ -10,5 +10,6 @@ export function useQuakes(feed: FeedWindow) {
     queryFn: () => fetchQuakes(feed),
     refetchInterval: POLL_INTERVAL_MS,
     staleTime: POLL_INTERVAL_MS,
+    placeholderData: keepPreviousData,
   });
 }
