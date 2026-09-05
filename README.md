@@ -20,7 +20,7 @@ npm run preview
 
 Import the GitHub repo. Framework: **Vite**. Build: `npm run build`. Output: `dist`.
 
-After the first deploy, if the URL is not `https://seismic.diallo.digital`, update these files to match:
+After the first deploy, if the URL is not `https://seismic.center`, update these files to match:
 
 - `index.html` (`canonical`, `og:url`, `og:image`, `twitter:image`, JSON-LD)
 - `public/robots.txt`
