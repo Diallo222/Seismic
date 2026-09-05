@@ -15,6 +15,7 @@ import {
   markerFragmentShader,
   markerVertexShader,
 } from "../../shaders/marker.glsl";
+import { playMarkerClick } from "../../lib/clickSound";
 
 const SELECTED_SCALE_BOOST = 2.2;
 const NEW_QUAKE_SCALE_BOOST = 1.55;
@@ -138,6 +139,7 @@ export function Markers({
         if (id == null) return;
         const q = quakes[id];
         if (!q) return;
+        playMarkerClick();
         select(q.id === selectedId ? null : q.id);
       }}
       onPointerMove={(e: ThreeEvent<PointerEvent>) => {
