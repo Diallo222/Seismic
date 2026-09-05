@@ -10,15 +10,20 @@ import { StatCards } from "../dashboard/StatCards";
 import { MagnitudeHistogram } from "../charts/MagnitudeHistogram";
 import { TimelineChart } from "../charts/TimelineChart";
 import { QuakeDetail } from "../dashboard/QuakeDetail";
+import { LoadingSkeleton } from "./States";
 
 type SheetTab = "feed" | "filters" | null;
 
 export function MobileSheet({
   quakes,
+  totalUnfiltered,
   selectedQuake,
+  loading = false,
 }: {
   quakes: Quake[];
+  totalUnfiltered?: number;
   selectedQuake: Quake | null;
+  loading?: boolean;
 }) {
   const { t } = useTranslation();
   const [tab, setTab] = useState<SheetTab>(null);
@@ -29,6 +34,8 @@ export function MobileSheet({
         <div className="min-w-0 flex-1">
           {selectedQuake ? (
             <QuakeDetail quake={selectedQuake} mobile />
+          ) : loading ? (
+            <LoadingSkeleton />
           ) : (
             <StatCards quakes={quakes} />
           )}
@@ -69,7 +76,7 @@ export function MobileSheet({
                 <button
                   onClick={() => setTab(null)}
                   aria-label={t("mobileSheet.closeSheet")}
-                  className="flex h-9 w-9 cursor-pointer items-center justify-center text-[var(--muted)] hover:text-[var(--ink)]"
+                  className="flex h-11 w-11 cursor-pointer items-center justify-center text-[var(--muted)] hover:text-[var(--ink)]"
                 >
                   <X size={16} />
                 </button>
@@ -86,7 +93,19 @@ export function MobileSheet({
               )}
 
               {tab === "feed" && (
-                <FeedList quakes={quakes} className="max-h-[55dvh]" />
+                loading ? (
+                  <div className="space-y-2 py-1">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                      <div key={i} className="skeleton h-9 w-full" />
+                    ))}
+                  </div>
+                ) : (
+                  <FeedList
+                    quakes={quakes}
+                    totalUnfiltered={totalUnfiltered}
+                    className="max-h-[55dvh]"
+                  />
+                )
               )}
             </HudFrame>
           </motion.div>

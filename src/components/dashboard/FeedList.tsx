@@ -3,12 +3,16 @@ import type { Quake } from "../../lib/types";
 import { formatMag, timeAgo } from "../../lib/format";
 import { magToColor } from "../../lib/geo";
 import { useDashboardStore } from "../../store/useDashboardStore";
+import { playMarkerClick } from "../../lib/clickSound";
 
 export function FeedList({
   quakes,
+  totalUnfiltered,
   className = "",
 }: {
   quakes: Quake[];
+  /** Raw feed size before mag/tsunami filters — distinguishes quiet window vs filter miss. */
+  totalUnfiltered?: number;
   className?: string;
 }) {
   const { t } = useTranslation();
@@ -18,17 +22,23 @@ export function FeedList({
   const newIds = useDashboardStore((s) => s.newIds);
 
   if (quakes.length === 0) {
+    const filtersActive = filters.minMag > 0 || filters.tsunamiOnly;
+    const emptyWindow =
+      typeof totalUnfiltered === "number"
+        ? totalUnfiltered === 0
+        : !filtersActive;
+
     return (
       <div className="px-1 py-6 text-center text-sm text-[var(--muted)]">
-        {t("feedList.noMatch")}
-        {filters.minMag > 0 && (
-          <span className="block font-mono text-xs mt-1 text-[var(--muted)]/70">
+        {emptyWindow ? t("feedList.emptyWindow") : t("feedList.noMatch")}
+        {filtersActive && !emptyWindow && filters.minMag > 0 && (
+          <span className="mt-1 block font-mono text-xs text-[var(--muted)]/70">
             {t("feedList.minMagFilter", { mag: formatMag(filters.minMag) })}
             {filters.tsunamiOnly ? t("feedList.tsunamiOnlySuffix") : ""}
           </span>
         )}
-        {filters.minMag === 0 && filters.tsunamiOnly && (
-          <span className="block font-mono text-xs mt-1 text-[var(--muted)]/70">
+        {filtersActive && !emptyWindow && filters.minMag === 0 && filters.tsunamiOnly && (
+          <span className="mt-1 block font-mono text-xs text-[var(--muted)]/70">
             {t("feedList.tsunamiOnly")}
           </span>
         )}
@@ -44,7 +54,10 @@ export function FeedList({
         return (
           <li key={q.id}>
             <button
-              onClick={() => select(q.id === selectedId ? null : q.id)}
+              onClick={() => {
+                playMarkerClick();
+                select(q.id === selectedId ? null : q.id);
+              }}
               className={`flex min-h-11 w-full cursor-pointer items-center gap-2.5 rounded-[var(--radius-sm)] px-2 py-1.5 text-start text-sm transition-colors duration-200 ${
                 selected
                   ? "bg-[var(--accent)]/20 ring-1 ring-[var(--accent)]/50"

@@ -62,6 +62,7 @@
   },
   "feedList": {
     "noMatch": "Aucun séisme ne correspond aux filtres actuels",
+    "emptyWindow": "Aucun séisme dans cette période",
     "minMagFilter": "M ≥ {{mag}}",
     "tsunamiOnlySuffix": " · tsunami uniquement",
     "tsunamiOnly": "alertes tsunami uniquement"
@@ -82,5 +83,9 @@
   },
   "lang": {
     "label": "Langue"
+  },
+  "sound": {
+    "mute": "Couper le son des clics",
+    "unmute": "Activer le son des clics"
   }
 }

@@ -62,6 +62,7 @@
   },
   "feedList": {
     "noMatch": "No quakes match current filters",
+    "emptyWindow": "No quakes in this time window",
     "minMagFilter": "M ≥ {{mag}}",
     "tsunamiOnlySuffix": " · tsunami only",
     "tsunamiOnly": "tsunami alerts only"
@@ -82,5 +83,9 @@
   },
   "lang": {
     "label": "Language"
+  },
+  "sound": {
+    "mute": "Mute click sound",
+    "unmute": "Unmute click sound"
   }
 }

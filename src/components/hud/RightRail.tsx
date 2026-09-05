@@ -11,10 +11,12 @@ const PANEL_W = 320;
 
 export function RightRail({
   quakes,
+  totalUnfiltered,
   loading,
   defaultOpen = false,
 }: {
   quakes: Quake[];
+  totalUnfiltered?: number;
   loading: boolean;
   defaultOpen?: boolean;
 }) {
@@ -75,7 +77,11 @@ export function RightRail({
                   ))}
                 </div>
               ) : (
-                <FeedList quakes={quakes} className="min-h-0 flex-1" />
+                <FeedList
+                  quakes={quakes}
+                  totalUnfiltered={totalUnfiltered}
+                  className="min-h-0 flex-1"
+                />
               )}
             </HudFrame>
           </motion.div>
